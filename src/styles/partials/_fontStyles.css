@@ -1,0 +1,30 @@
+@font-face {
+    font-family: "Happy Times";
+    font-weight:400;
+    font-style:normal;
+    src: url("../../fonts/happyTimes/happy-times-NG_regular_master_web.woff2") format("woff2"),
+         url("../../fonts/happyTimes/happy-times-NG_regular_master_web.woff") format("woff");
+  }
+
+@font-face {
+font-family: "Happy Times";
+font-weight:400;
+font-style: italic;
+src: url("../../fonts/happyTimes/happy-times-NG_italic_master_web.woff2") format("woff2"),
+        url("../../fonts/happyTimes/happy-times-NG_italic_master_web.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Apfel Grotesk";
+    font-weight:400;
+    src: url("../../fonts/apfel/ApfelGrotezk-Regular.woff2") format("woff2"),
+         url("../../fonts/apfel/ApfelGrotezk-Regular.woff") format("woff");
+  }
+
+@font-face {
+    font-family: "Apfel Grotesk";
+    font-weight:600;
+    src: url("../../fonts/apfel/ApfelGrotezk-Fett.woff2") format("woff2"),
+         url("../../fonts/apfel/ApfelGrotezk-Fett.woff") format("woff");
+  }
+
