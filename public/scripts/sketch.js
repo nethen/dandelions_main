@@ -98,8 +98,10 @@ function mouseClicked() {
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
 
   console.log(squares.find(active));
-  const x = squares.find(active);
-  x.updateImg();
-  x.updateMoving();
+  const clickedSquare = squares.find(active);
+  clickedSquare.updateImg();
+  clickedSquare.updateMoving();
+  const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-clickedSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-clickedSquare.position.y) < IMG_SIZE*2) && square != clickedSquare));
+  console.log(adjacentSquares);
   socket.emit('squareUpdate',x.state);
 }
