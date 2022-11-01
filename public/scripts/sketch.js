@@ -5,6 +5,7 @@ const SQUARE_COUNT = 16;
 const CANVAS_COUNT = 100;
 const MOVING_COUNT = 20;
 let timeFreeze = true;
+let socket;
 
 class Square {
   constructor(x,y, bool){
@@ -60,6 +61,8 @@ function preload() {
 }
 
 function setup() {
+  socket = io.connect('http://localhost:3000')
+
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
   for (let i = 0; i < CANVAS_COUNT; i++){
     for (let j = 0; j < CANVAS_COUNT; j++){
