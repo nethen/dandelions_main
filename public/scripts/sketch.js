@@ -101,5 +101,5 @@ function mouseClicked() {
   const x = squares.find(active);
   x.updateImg();
   x.updateMoving();
-
+  socket.emit('squareUpdate',x.state);
 }

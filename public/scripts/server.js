@@ -47,7 +47,7 @@ io.sockets.on('connection', (socket) => {
 	
 	//socket.emit('squares',tempSquares);
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
-
+	socket.on('squareUpdate',(data) => console.log(data));
 	socket.on('disconnect', () => console.log('Client has disconnected'))
 })
 
