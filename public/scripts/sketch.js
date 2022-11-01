@@ -5,6 +5,7 @@ const IMG_SIZE = 32;
 const SQUARE_COUNT = 16;
 const CANVAS_COUNT = 100;
 const MOVING_COUNT = 20;
+const TIMER_DURATION = 10;
 let socket;
 
 class Square {
@@ -12,7 +13,8 @@ class Square {
     this.position = {x: x, y: y};
     this.globalPos = {x: x, y: y};
     this.state = state;
-    this.counter = 60;
+    this.pState = state;
+    this.counter = TIMER_DURATION;
     this.srcWidth = state;
     if (this.counter === 32){
       this.maxCounter = 32;
@@ -72,10 +74,23 @@ class Square {
   //       }
   //   }
   // }
+    startMoving(){
+      this.moving = true;
+      this.counter = 0;
+    }
+
     update(){
-      if (this.moving){
-        if (this.counter < 60){
-          this.counter ++;
+      if (this.moving && this.counter < TIMER_DURATION){
+        // if (this.counter < 60){
+        //   this.counter ++;
+        //   //console.log(this.counter);
+        //   this.srcWidth += ((this.state - this.pState)/60);
+        // }
+        this.counter ++;
+        this.srcWidth += ((this.state - this.pState)/TIMER_DURATION);
+        if (this.counter >= TIMER_DURATION){
+          this.moving = false;
+          this.pState = this.state;
         }
       }
     }
@@ -115,17 +130,20 @@ function draw() {
 function mouseClicked() {
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
 
-  console.log(squares.find(active));
+  //console.log(squares.find(active));
   const clickedSquare = squares.find(active);
+  if (clickedSquare.moving === true) return;
   clickedSquare.updateImg();
-  clickedSquare.updateMoving();
   clickedSquare.updateState();
+  clickedSquare.startMoving();
+  // clickedSquare.updateMoving();
   const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-clickedSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-clickedSquare.position.y) < IMG_SIZE*2) && square != clickedSquare));
   
   for (let i = 0; i < adjacentSquares.length; i++){
     adjacentSquares[i].ripple(clickedSquare.state);
+    adjacentSquares[i].startMoving();
   }
 
-  console.log(adjacentSquares);
+  //console.log(adjacentSquares);
   socket.emit('squareUpdate',clickedSquare.state);
 }
