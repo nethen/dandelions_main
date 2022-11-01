@@ -10,9 +10,10 @@ let socket;
 class Square {
   constructor(x,y, state){
     this.position = {x: x, y: y};
-    this.globalPos = {x: x, y: y}
+    this.globalPos = {x: x, y: y};
     this.state = state;
-    this.counter = this.state;
+    this.counter = 60;
+    this.srcWidth = state;
     if (this.counter === 32){
       this.maxCounter = 32;
     } else{
@@ -35,8 +36,8 @@ class Square {
   display(){
     push();
     translate(this.position.x, this.position.y);
-    image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.counter, this.counter)
-
+    //image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.counter, this.counter);
+    image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
     pop();
   }
   
@@ -49,18 +50,35 @@ class Square {
     this.moving = !this.moving;
   }
 
-  update(){
-    if (this.moving == true){
-      if (this.counter < this.minCounter || this.counter > this.maxCounter){
-        this.adder *= -1;
-        this.counter += this.adder;
-
-      } else{
-        //if (this.counterB == 90) this.counterB = 0;
-        this.counter += this.adder;
-        }
-    }
+  updateState(){
+    this.state *= 2;
+    if (this.state > 32) this.state = 2;
   }
+
+  ripple(comparedState){
+    if (this.state < comparedState) this.state *= 2;
+    else if (this.state > comparedState) this.state /= 2;
+  }
+
+  // update(){
+  //   if (this.moving == true){
+  //     if (this.counter < this.minCounter || this.counter > this.maxCounter){
+  //       this.adder *= -1;
+  //       this.counter += this.adder;
+
+  //     } else{
+  //       //if (this.counterB == 90) this.counterB = 0;
+  //       this.counter += this.adder;
+  //       }
+  //   }
+  // }
+    update(){
+      if (this.moving){
+        if (this.counter < 60){
+          this.counter ++;
+        }
+      }
+    }
 }
 
 let squares = []
@@ -101,7 +119,13 @@ function mouseClicked() {
   const clickedSquare = squares.find(active);
   clickedSquare.updateImg();
   clickedSquare.updateMoving();
+  clickedSquare.updateState();
   const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-clickedSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-clickedSquare.position.y) < IMG_SIZE*2) && square != clickedSquare));
+  
+  for (let i = 0; i < adjacentSquares.length; i++){
+    adjacentSquares[i].ripple(clickedSquare.state);
+  }
+
   console.log(adjacentSquares);
-  socket.emit('squareUpdate',x.state);
+  socket.emit('squareUpdate',clickedSquare.state);
 }
