@@ -104,8 +104,8 @@ function preload() {
 }
 
 function setup() {
-  socket = io.connect('http://localhost:3000')
-  //socket = io.connect('dandelions-iat222.herokuapp.com')
+  //socket = io.connect('http://localhost:3000')
+  socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('squareRequest',(x) => {
     x.forEach(function(square){
       squares.push(new Square(square.position.x, square.position.y, Math.pow(2,1 + square.state)));
