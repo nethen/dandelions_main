@@ -12,15 +12,16 @@ const SQUARES = 100;
 
 const http = require('http')
 const express = require('express')
+const PORT = process.env.PORT || 3000
 
 const app = express()
 app.use(express.static('public/'))
 
-app.set('port', '3000')
+app.set('port', 'PORT')
 
 const server = http.createServer(app)
 server.on('listening', () => {
- console.log('Listening on port 3000')
+ console.log('Listening on port '+PORT)
 })
 
 for (let i = 0; i < SQUARES; i++){
@@ -52,5 +53,5 @@ io.sockets.on('connection', (socket) => {
 })
 
 
-server.listen('3000')
+server.listen(PORT)
 
