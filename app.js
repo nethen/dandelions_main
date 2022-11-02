@@ -44,7 +44,8 @@ io.sockets.on('connection', (socket) => {
 	// socket.on('squareRequest', () => {
 	// 	io.emit('squareRequest',tempSquares);
 	// });
-	io.emit('squareRequest', tempSquares);
+	//io.emit('squareRequest', tempSquares);
+	socket.emit('squareRequest', tempSquares);
 	
 	//socket.emit('squares',tempSquares);
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))

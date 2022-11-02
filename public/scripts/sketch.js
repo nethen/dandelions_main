@@ -104,8 +104,8 @@ function preload() {
 }
 
 function setup() {
-  //socket = io.connect('http://localhost:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  socket = io.connect('http://localhost:3000')
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('squareRequest',(x) => {
     x.forEach(function(square){
       squares.push(new Square(square.position.x, square.position.y, Math.pow(2,1 + square.state)));
@@ -141,6 +141,8 @@ function mouseClicked() {
   const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-clickedSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-clickedSquare.position.y) < IMG_SIZE*2) && square != clickedSquare));
   
   for (let i = 0; i < adjacentSquares.length; i++){
+    
+    if(adjacentSquares[i].moving === true) return;
     adjacentSquares[i].ripple(clickedSquare.state);
     adjacentSquares[i].startMoving();
   }
