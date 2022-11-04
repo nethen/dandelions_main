@@ -38,6 +38,11 @@ for (let i = 0; i < SQUARES; i++){
 // Web sockets
 const io = require('socket.io')(server)
 
+let serverRefresh = setInterval(function(){
+	io.emit('serverRefresh', new Date()); 
+	console.log("emit");
+}, 10000);
+
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 	//console.log(tempSquares)
@@ -46,10 +51,10 @@ io.sockets.on('connection', (socket) => {
 	// });
 	//io.emit('squareRequest', tempSquares);
 	socket.emit('squareRequest', tempSquares);
-	let serverRefresh = setInterval(function(){
-		io.emit('serverRefresh', new Date()); 
-		console.log("emit");
-	}, 10000);
+	// let serverRefresh = setInterval(function(){
+	// 	io.emit('serverRefresh', new Date()); 
+	// 	console.log("emit");
+	// }, 10000);
 
 	socket.on('disconnect', function () {
         clearInterval(serverRefresh);
