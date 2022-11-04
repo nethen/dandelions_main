@@ -46,7 +46,15 @@ io.sockets.on('connection', (socket) => {
 	// });
 	//io.emit('squareRequest', tempSquares);
 	socket.emit('squareRequest', tempSquares);
-	
+	let serverRefresh = setInterval(function(){
+		io.emit('serverRefresh', new Date()); 
+		console.log("emit");
+	}, 10000);
+
+	socket.on('disconnect', function () {
+        clearInterval(serverRefresh);
+    });
+
 	//socket.emit('squares',tempSquares);
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
 	socket.on('squareUpdate',(data) => console.log(data));

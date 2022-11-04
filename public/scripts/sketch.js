@@ -7,6 +7,7 @@ const CANVAS_COUNT = 100;
 const MOVING_COUNT = 20;
 const TIMER_DURATION = 10;
 let socket;
+let globalImg;
 
 class Square {
   constructor(x,y, state){
@@ -16,22 +17,9 @@ class Square {
     this.pState = state;
     this.counter = TIMER_DURATION;
     this.srcWidth = state;
-    if (this.counter === 32){
-      this.maxCounter = 32;
-    } else{
-      this.maxCounter = this.counter * 2;
-    }
-
-    if (this.counter === 2){
-      this.minCounter = 2;
-    } else{
-      this.minCounter = this.counter / 2;
-    }
     this.counterB = 100;
-    this.adder = 1;
-    // this.moving = bool;
-    this.active = false;
-    this.currImg = img;
+    this.moving = false;
+//    this.currImg = globalImg;
   }
   
 
@@ -39,14 +27,14 @@ class Square {
     push();
     translate(this.position.x, this.position.y);
     //image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.counter, this.counter);
-    image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+    image(globalImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
     pop();
   }
   
-  updateImg(){
-    if (this.currImg === img) this.currImg = img2;
-    else this.currImg = img;
-  }
+  // updateImg(){
+  //   if (this.currImg === img) this.currImg = img2;
+  //   else this.currImg = img;
+  // }
 
   updateMoving(){
     this.moving = !this.moving;
@@ -62,18 +50,6 @@ class Square {
     else if (this.state > comparedState) this.state /= 2;
   }
 
-  // update(){
-  //   if (this.moving == true){
-  //     if (this.counter < this.minCounter || this.counter > this.maxCounter){
-  //       this.adder *= -1;
-  //       this.counter += this.adder;
-
-  //     } else{
-  //       //if (this.counterB == 90) this.counterB = 0;
-  //       this.counter += this.adder;
-  //       }
-  //   }
-  // }
     startMoving(){
       this.moving = true;
       this.counter = 0;
@@ -81,11 +57,6 @@ class Square {
 
     update(){
       if (this.moving && this.counter < TIMER_DURATION){
-        // if (this.counter < 60){
-        //   this.counter ++;
-        //   //console.log(this.counter);
-        //   this.srcWidth += ((this.state - this.pState)/60);
-        // }
         this.counter ++;
         this.srcWidth += ((this.state - this.pState)/TIMER_DURATION);
         if (this.counter >= TIMER_DURATION){
@@ -101,6 +72,7 @@ let squares = []
 function preload() {
  img = loadImage("assets/asset.png");
  img2 = loadImage("assets/asset2.png");
+ globalImg = img;
 }
 
 function setup() {
@@ -118,6 +90,15 @@ function setup() {
   });
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
   noSmooth();
+  frameRate(30);
+
+  //One time listeners go into setup
+  socket.on('serverRefresh',(data) => {
+    if (data) {
+      console.log(data); 
+      updateImg();
+    }
+  });
 }
 
 function draw() {
@@ -126,6 +107,15 @@ function draw() {
     squares[i].display();
     squares[i].update();
   }
+
+  // socket.on('serverRefresh',(data) => {
+  //   //console.log("did a 180");
+  //   if (data) {
+  //     console.log(data); 
+  //     updateImg();
+  //   }
+  //   //squares.forEach((arrayItem) => arrayItem.updateImg());
+  // });
 }
 
 function mouseClicked() {
@@ -134,7 +124,7 @@ function mouseClicked() {
   //console.log(squares.find(active));
   const clickedSquare = squares.find(active);
   if (clickedSquare.moving === true) return;
-  clickedSquare.updateImg();
+  //clickedSquare.updateImg();
   clickedSquare.updateState();
   clickedSquare.startMoving();
   // clickedSquare.updateMoving();
@@ -150,3 +140,9 @@ function mouseClicked() {
   //console.log(adjacentSquares);
   socket.emit('squareUpdate',clickedSquare.state);
 }
+
+const updateImg = () => {
+  if (globalImg === img) globalImg = img2;
+  else globalImg = img;
+}
+
