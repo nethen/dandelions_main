@@ -12,15 +12,16 @@ const SQUARES = 100;
 
 const http = require('http')
 const express = require('express')
+const PORT = process.env.PORT || 3000
 
 const app = express()
 app.use(express.static('public/'))
 
-app.set('port', '3000')
+app.set('port', 'PORT')
 
 const server = http.createServer(app)
 server.on('listening', () => {
- console.log('Listening on port 3000')
+ console.log('Listening on port '+PORT)
 })
 
 for (let i = 0; i < SQUARES; i++){
@@ -37,20 +38,34 @@ for (let i = 0; i < SQUARES; i++){
 // Web sockets
 const io = require('socket.io')(server)
 
+let serverRefresh = setInterval(function(){
+	io.emit('serverRefresh', new Date()); 
+	console.log("emit");
+}, 10000);
+
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 	//console.log(tempSquares)
 	// socket.on('squareRequest', () => {
 	// 	io.emit('squareRequest',tempSquares);
 	// });
-	io.emit('squareRequest', tempSquares);
-	
+	//io.emit('squareRequest', tempSquares);
+	socket.emit('squareRequest', tempSquares);
+	// let serverRefresh = setInterval(function(){
+	// 	io.emit('serverRefresh', new Date()); 
+	// 	console.log("emit");
+	// }, 10000);
+
+	socket.on('disconnect', function () {
+        clearInterval(serverRefresh);
+    });
+
 	//socket.emit('squares',tempSquares);
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
-
+	socket.on('squareUpdate',(data) => console.log(data));
 	socket.on('disconnect', () => console.log('Client has disconnected'))
 })
 
 
-server.listen('3000')
+server.listen(PORT)
 

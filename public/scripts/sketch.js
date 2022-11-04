@@ -5,62 +5,66 @@ const IMG_SIZE = 32;
 const SQUARE_COUNT = 16;
 const CANVAS_COUNT = 100;
 const MOVING_COUNT = 20;
+const TIMER_DURATION = 10;
 let socket;
+let globalImg;
 
 class Square {
   constructor(x,y, state){
     this.position = {x: x, y: y};
-    this.globalPos = {x: x, y: y}
+    this.globalPos = {x: x, y: y};
     this.state = state;
-    this.counter = this.state;
-    if (this.counter === 32){
-      this.maxCounter = 32;
-    } else{
-      this.maxCounter = this.counter * 2;
-    }
-
-    if (this.counter === 2){
-      this.minCounter = 2;
-    } else{
-      this.minCounter = this.counter / 2;
-    }
+    this.pState = state;
+    this.counter = TIMER_DURATION;
+    this.srcWidth = state;
     this.counterB = 100;
-    this.adder = 1;
-    // this.moving = bool;
-    this.active = false;
-    this.currImg = img;
+    this.moving = false;
+//    this.currImg = globalImg;
   }
   
 
   display(){
     push();
     translate(this.position.x, this.position.y);
-    image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.counter, this.counter)
-
+    //image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.counter, this.counter);
+    image(globalImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
     pop();
   }
   
-  updateImg(){
-    if (this.currImg === img) this.currImg = img2;
-    else this.currImg = img;
-  }
+  // updateImg(){
+  //   if (this.currImg === img) this.currImg = img2;
+  //   else this.currImg = img;
+  // }
 
   updateMoving(){
     this.moving = !this.moving;
   }
 
-  update(){
-    if (this.moving == true){
-      if (this.counter < this.minCounter || this.counter > this.maxCounter){
-        this.adder *= -1;
-        this.counter += this.adder;
-
-      } else{
-        //if (this.counterB == 90) this.counterB = 0;
-        this.counter += this.adder;
-        }
-    }
+  updateState(){
+    this.state *= 2;
+    if (this.state > 32) this.state = 2;
   }
+
+  ripple(comparedState){
+    if (this.state < comparedState) this.state *= 2;
+    else if (this.state > comparedState) this.state /= 2;
+  }
+
+    startMoving(){
+      this.moving = true;
+      this.counter = 0;
+    }
+
+    update(){
+      if (this.moving && this.counter < TIMER_DURATION){
+        this.counter ++;
+        this.srcWidth += ((this.state - this.pState)/TIMER_DURATION);
+        if (this.counter >= TIMER_DURATION){
+          this.moving = false;
+          this.pState = this.state;
+        }
+      }
+    }
 }
 
 let squares = []
@@ -68,10 +72,12 @@ let squares = []
 function preload() {
  img = loadImage("assets/asset.png");
  img2 = loadImage("assets/asset2.png");
+ globalImg = img;
 }
 
 function setup() {
-  socket = io.connect('http://localhost:3000')
+  //socket = io.connect('http://localhost:3000')
+  socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('squareRequest',(x) => {
     x.forEach(function(square){
       squares.push(new Square(square.position.x, square.position.y, Math.pow(2,1 + square.state)));
@@ -84,6 +90,15 @@ function setup() {
   });
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
   noSmooth();
+  frameRate(30);
+
+  //One time listeners go into setup
+  socket.on('serverRefresh',(data) => {
+    if (data) {
+      console.log(data); 
+      updateImg();
+    }
+  });
 }
 
 function draw() {
@@ -92,14 +107,42 @@ function draw() {
     squares[i].display();
     squares[i].update();
   }
+
+  // socket.on('serverRefresh',(data) => {
+  //   //console.log("did a 180");
+  //   if (data) {
+  //     console.log(data); 
+  //     updateImg();
+  //   }
+  //   //squares.forEach((arrayItem) => arrayItem.updateImg());
+  // });
 }
 
 function mouseClicked() {
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
 
-  console.log(squares.find(active));
-  const x = squares.find(active);
-  x.updateImg();
-  x.updateMoving();
+  //console.log(squares.find(active));
+  const clickedSquare = squares.find(active);
+  if (clickedSquare.moving === true) return;
+  //clickedSquare.updateImg();
+  clickedSquare.updateState();
+  clickedSquare.startMoving();
+  // clickedSquare.updateMoving();
+  const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-clickedSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-clickedSquare.position.y) < IMG_SIZE*2) && square != clickedSquare));
+  
+  for (let i = 0; i < adjacentSquares.length; i++){
+    
+    if(adjacentSquares[i].moving === true) return;
+    adjacentSquares[i].ripple(clickedSquare.state);
+    adjacentSquares[i].startMoving();
+  }
 
+  //console.log(adjacentSquares);
+  socket.emit('squareUpdate',clickedSquare.state);
 }
+
+const updateImg = () => {
+  if (globalImg === img) globalImg = img2;
+  else globalImg = img;
+}
+
