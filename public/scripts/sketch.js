@@ -72,6 +72,7 @@ let squares = []
 function preload() {
  img = loadImage("assets/asset.png");
  img2 = loadImage("assets/asset2.png");
+ img3 = loadImage("assets/asset3.png");
  globalImg = img;
 }
 
@@ -96,7 +97,11 @@ function setup() {
   socket.on('serverRefresh',(data) => {
     if (data) {
       console.log(data); 
+      data.forEach((element) => {
+        rippleAdjacent(element);
+      });
       updateImg();
+      
     }
   });
 }
@@ -123,23 +128,29 @@ function mouseClicked() {
 
   //console.log(squares.find(active));
   const clickedSquare = squares.find(active);
+  if (clickedSquare){
   if (clickedSquare.moving === true) return;
-  //clickedSquare.updateImg();
-  clickedSquare.updateState();
-  clickedSquare.startMoving();
-  // clickedSquare.updateMoving();
-  const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-clickedSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-clickedSquare.position.y) < IMG_SIZE*2) && square != clickedSquare));
+    //clickedSquare.updateImg();
+    clickedSquare.updateState();
+    clickedSquare.startMoving();
+    // clickedSquare.updateMoving();
+    //rippleAdjacent(clickedSquare);
+    //console.log(adjacentSquares);
+    socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state});
+  }
+}
+
+const rippleAdjacent = (centerSquare) => {
+  const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-centerSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-centerSquare.position.y) < IMG_SIZE*2) && square != centerSquare));
   
   for (let i = 0; i < adjacentSquares.length; i++){
     
     if(adjacentSquares[i].moving === true) return;
-    adjacentSquares[i].ripple(clickedSquare.state);
+    adjacentSquares[i].ripple(centerSquare.state);
     adjacentSquares[i].startMoving();
   }
-
-  //console.log(adjacentSquares);
-  socket.emit('squareUpdate',clickedSquare.state);
 }
+
 
 const updateImg = () => {
   if (globalImg === img) globalImg = img2;

@@ -7,6 +7,7 @@ class SquareHolder {
 
 }
 
+let loadSquares = [];
 let tempSquares = [];
 const SQUARES = 100;
 
@@ -26,7 +27,7 @@ server.on('listening', () => {
 
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	tempSquares.push(new SquareHolder(i * 32,j * 32));
+    	loadSquares.push(new SquareHolder(i * 32,j * 32));
     }
   }
 
@@ -39,8 +40,15 @@ for (let i = 0; i < SQUARES; i++){
 const io = require('socket.io')(server)
 
 let serverRefresh = setInterval(function(){
-	io.emit('serverRefresh', new Date()); 
-	console.log("emit");
+	io.emit('serverRefresh', tempSquares); 
+	tempSquares.forEach((element) => {
+		const pos = element.position;
+		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
+		console.log( Math.log2(element.state) - 1);
+		console.log(a);
+		a.state = Math.log2(element.state) - 1;
+	});
+	tempSquares = [];
 }, 10000);
 
 io.sockets.on('connection', (socket) => {
@@ -50,7 +58,7 @@ io.sockets.on('connection', (socket) => {
 	// 	io.emit('squareRequest',tempSquares);
 	// });
 	//io.emit('squareRequest', tempSquares);
-	socket.emit('squareRequest', tempSquares);
+	socket.emit('squareRequest', loadSquares);
 	// let serverRefresh = setInterval(function(){
 	// 	io.emit('serverRefresh', new Date()); 
 	// 	console.log("emit");
@@ -62,7 +70,10 @@ io.sockets.on('connection', (socket) => {
 
 	//socket.emit('squares',tempSquares);
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
-	socket.on('squareUpdate',(data) => console.log(data));
+	socket.on('squareUpdate',(data) => {
+		console.log(data);
+		tempSquares.push(data);
+	});
 	socket.on('disconnect', () => console.log('Client has disconnected'))
 })
 
