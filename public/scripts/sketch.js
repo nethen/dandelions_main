@@ -8,6 +8,7 @@ const MOVING_COUNT = 20;
 const TIMER_DURATION = 10;
 let socket;
 let globalImg;
+let moveChosen = null;
 
 class Square {
   constructor(x,y, state){
@@ -19,6 +20,7 @@ class Square {
     this.srcWidth = state;
     this.counterB = 100;
     this.moving = false;
+    this.selected = false;
 //    this.currImg = globalImg;
   }
   
@@ -27,7 +29,13 @@ class Square {
     push();
     translate(this.position.x, this.position.y);
     //image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.counter, this.counter);
+    //if (this.selected) image(,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
     image(globalImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+    if (this.selected){
+      fill(0,0,255);
+      ellipse(16,16,32,32);
+      noFill();
+    }
     pop();
   }
   
@@ -96,6 +104,8 @@ function setup() {
       data.forEach((element) => {
         rippleAdjacent(element);
       });
+      if (moveChosen != null)squares.find((element) => element.position.x == moveChosen.x && element.position.y == moveChosen.y).selected = false;
+      moveChosen = null;
       updateImg();
       
     }
@@ -115,13 +125,25 @@ function mouseClicked() {
 
   const clickedSquare = squares.find(active);
   if (clickedSquare){
-  if (clickedSquare.moving === true) return;
+    let bool = false
+    if (moveChosen === null){
+      bool = true;
+      moveChosen = {x: clickedSquare.position.x, y: clickedSquare.position.y};
+      clickedSquare.selected = true;
+    } else{
+      if (clickedSquare.selected){
+        moveChosen = null;
+        clickedSquare.selected = false;
+      }
+    }
+  /*if (clickedSquare.moving === true) return;
 
     clickedSquare.updateState();
     clickedSquare.startMoving();
     //rippleAdjacent(clickedSquare);
-
-    socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state});
+    */
+    
+    socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
   }
 }
 
