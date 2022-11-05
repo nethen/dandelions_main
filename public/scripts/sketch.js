@@ -83,11 +83,7 @@ function setup() {
     x.forEach(function(square){
       squares.push(new Square(square.position.x, square.position.y, Math.pow(2,1 + square.state)));
     });
-    // for (let i = 0; i < CANVAS_COUNT; i++){
-    //   for (let j = 0; j < CANVAS_COUNT; j++){
-    //   squares.push(new Square(x[],j * SQUARE_SIZE*SQUARE_COUNT, i<MOVING_COUNT && j < MOVING_COUNT));
-    //   }
-    // }
+
   });
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
   noSmooth();
@@ -112,30 +108,19 @@ function draw() {
     squares[i].display();
     squares[i].update();
   }
-
-  // socket.on('serverRefresh',(data) => {
-  //   //console.log("did a 180");
-  //   if (data) {
-  //     console.log(data); 
-  //     updateImg();
-  //   }
-  //   //squares.forEach((arrayItem) => arrayItem.updateImg());
-  // });
 }
 
 function mouseClicked() {
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
 
-  //console.log(squares.find(active));
   const clickedSquare = squares.find(active);
   if (clickedSquare){
   if (clickedSquare.moving === true) return;
-    //clickedSquare.updateImg();
+
     clickedSquare.updateState();
     clickedSquare.startMoving();
-    // clickedSquare.updateMoving();
     //rippleAdjacent(clickedSquare);
-    //console.log(adjacentSquares);
+
     socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state});
   }
 }

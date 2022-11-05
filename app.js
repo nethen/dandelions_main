@@ -31,10 +31,6 @@ for (let i = 0; i < SQUARES; i++){
     }
   }
 
-// // Web sockets
-// const io = require('socket.io')(server,{
-//     allowEIO3: true // false by default
-// })
 
 // Web sockets
 const io = require('socket.io')(server)
@@ -44,8 +40,8 @@ let serverRefresh = setInterval(function(){
 	tempSquares.forEach((element) => {
 		const pos = element.position;
 		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
-		console.log( Math.log2(element.state) - 1);
-		console.log(a);
+		// console.log( Math.log2(element.state) - 1);
+		// console.log(a);
 		a.state = Math.log2(element.state) - 1;
 	});
 	tempSquares = [];
@@ -53,22 +49,9 @@ let serverRefresh = setInterval(function(){
 
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
-	//console.log(tempSquares)
-	// socket.on('squareRequest', () => {
-	// 	io.emit('squareRequest',tempSquares);
-	// });
-	//io.emit('squareRequest', tempSquares);
+
 	socket.emit('squareRequest', loadSquares);
-	// let serverRefresh = setInterval(function(){
-	// 	io.emit('serverRefresh', new Date()); 
-	// 	console.log("emit");
-	// }, 10000);
 
-	// socket.on('disconnect', function () {
-    //     clearInterval(serverRefresh);
-    // });
-
-	//socket.emit('squares',tempSquares);
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
 	socket.on('squareUpdate',(data) => {
 		console.log(data);
