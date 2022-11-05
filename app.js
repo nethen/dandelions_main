@@ -56,9 +56,9 @@ io.sockets.on('connection', (socket) => {
 	// 	console.log("emit");
 	// }, 10000);
 
-	socket.on('disconnect', function () {
-        clearInterval(serverRefresh);
-    });
+	// socket.on('disconnect', function () {
+    //     clearInterval(serverRefresh);
+    // });
 
 	//socket.emit('squares',tempSquares);
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
