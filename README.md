@@ -1,5 +1,7 @@
 # dandelions_main
 
 To use:
-    npm install
-    node app.js
+```  
+  npm install
+   node app.js
+```
