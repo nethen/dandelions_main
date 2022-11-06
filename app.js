@@ -109,11 +109,13 @@ io.sockets.on('connection', (socket) => {
 		else if (data.selected === false){
 			const a = tempSquares.find((element) => element.position.x == data.position.x && element.position.y == element.position.y);
 			//remove states of ripple tiles owned by previously selected
+			if (a){
 			rippleSquares.forEach(element => {
 				element.state.forEach(currTile => {
 					if(currTile.owner.x == a.position.x && currTile.owner.y == a.position.y) element.state.splice(element.state.indexOf(currTile), 1);
 				})
 			})
+			}
 			rippleSquares = (rippleSquares.filter(element => element.state.length > 0));
 			tempSquares.splice(tempSquares.indexOf(a),1);
 		}
