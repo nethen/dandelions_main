@@ -7,6 +7,7 @@ class SquareHolder {
 
 }
 
+let loadSquares = [];
 let tempSquares = [];
 const SQUARES = 100;
 
@@ -26,43 +27,40 @@ server.on('listening', () => {
 
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	tempSquares.push(new SquareHolder(i * 32,j * 32));
+    	loadSquares.push(new SquareHolder(i * 32,j * 32));
     }
   }
 
-// // Web sockets
-// const io = require('socket.io')(server,{
-//     allowEIO3: true // false by default
-// })
 
 // Web sockets
 const io = require('socket.io')(server)
 
 let serverRefresh = setInterval(function(){
-	io.emit('serverRefresh', new Date()); 
-	console.log("emit");
+	io.emit('serverRefresh', tempSquares); 
+	tempSquares.forEach((element) => {
+		const pos = element.position;
+		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
+		// console.log( Math.log2(element.state) - 1);
+		// console.log(a);
+		a.state = Math.log2(element.state) - 1;
+	});
+	tempSquares = [];
 }, 10000);
 
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
-	//console.log(tempSquares)
-	// socket.on('squareRequest', () => {
-	// 	io.emit('squareRequest',tempSquares);
-	// });
-	//io.emit('squareRequest', tempSquares);
-	socket.emit('squareRequest', tempSquares);
-	// let serverRefresh = setInterval(function(){
-	// 	io.emit('serverRefresh', new Date()); 
-	// 	console.log("emit");
-	// }, 10000);
 
-	// socket.on('disconnect', function () {
-    //     clearInterval(serverRefresh);
-    // });
+	socket.emit('squareRequest', loadSquares);
 
-	//socket.emit('squares',tempSquares);
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
-	socket.on('squareUpdate',(data) => console.log(data));
+	socket.on('squareUpdate',(data) => {
+		console.log(data);
+		if (data.selected === true) tempSquares.push(data);
+		else if (data.selected === false){
+			const a = tempSquares.find((element) => element.position.x == data.position.x && element.position.y == element.position.y);
+			tempSquares.splice(tempSquares.indexOf(a),1);
+		}
+	});
 	socket.on('disconnect', () => console.log('Client has disconnected'))
 })
 
