@@ -7,8 +7,18 @@ class SquareHolder {
 
 }
 
+class SquareHolder2 {
+	constructor (x, y, state){
+		this.position = {x: x, y: y};
+		this.state = state;
+	}
+
+
+}
+
 let loadSquares = [];
 let tempSquares = [];
+let rippleSquares =[];
 const SQUARES = 100;
 
 const http = require('http')
@@ -36,7 +46,18 @@ for (let i = 0; i < SQUARES; i++){
 const io = require('socket.io')(server)
 
 let serverRefresh = setInterval(function(){
+	//remove duplicates in temp inside of ripple buffer
+	tempSquares.forEach((element) => {
+		const foundDupe = rippleSquares.find(compareElement => compareElement.position.x == element.position.x && compareElement.position.y == element.position.y);
+		if (foundDupe) rippleSquares.splice(rippleSquares.indexOf(foundDupe), 1)
+	});
+
+	rippleSquares.forEach(element => {
+		element.state = element.state[0];
+	});
+
 	io.emit('serverRefresh', tempSquares); 
+
 	tempSquares.forEach((element) => {
 		const pos = element.position;
 		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
@@ -44,7 +65,10 @@ let serverRefresh = setInterval(function(){
 		// console.log(a);
 		a.state = Math.log2(element.state) - 1;
 	});
+	//if (rippleSquares) console.log(rippleSquares);
+	io.emit('rippleSquares', rippleSquares);
 	tempSquares = [];
+	rippleSquares = [];
 }, 10000);
 
 io.sockets.on('connection', (socket) => {
@@ -53,11 +77,44 @@ io.sockets.on('connection', (socket) => {
 	socket.emit('squareRequest', loadSquares);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
+	
+	//ON USER ACTION
 	socket.on('squareUpdate',(data) => {
-		console.log(data);
-		if (data.selected === true) tempSquares.push(data);
+		//console.log(data);
+
+		//CHECK IF USER IS SELECTING TILE
+		if (data.selected === true) {
+			tempSquares.push(new SquareHolder2(data.position.x, data.position.y, data.state));
+
+			//Iterate in a 3x3 area around selected tile
+			for (let i = 0; i < 3; i++){
+				for (let j = 0; j < 3; j++){
+					let tempX = data.position.x + (32 * i) - 32;
+					let tempY = data.position.y + (32 * j) - 32;
+
+					if (tempX >= 0 && tempY >= 0){
+						//Isolate tiles surrounding selected cell
+						if (tempX != data.position.x || tempY != data.position.y) {
+							//const a = rippleSquares.find(element => Object.is(element.position.x, tempX) && Object.is(element.position.y, tempY));
+							const a = rippleSquares.find(element => element.position.x == tempX && element.position.y == tempY);
+							//console.log(a);
+							if (a) a.state.push({owner: data.position, state: data.state});
+							else rippleSquares.push(new SquareHolder2(tempX, tempY, [{owner: data.position, state: data.state}]));
+						}
+					}
+				}
+			}
+		}
+		//CHECK IF USER IS DESELECTING TILE
 		else if (data.selected === false){
 			const a = tempSquares.find((element) => element.position.x == data.position.x && element.position.y == element.position.y);
+			//remove states of ripple tiles owned by previously selected
+			rippleSquares.forEach(element => {
+				element.state.forEach(currTile => {
+					if(currTile.owner.x == a.position.x && currTile.owner.y == a.position.y) element.state.splice(element.state.indexOf(currTile), 1);
+				})
+			})
+			rippleSquares = (rippleSquares.filter(element => element.state.length > 0));
 			tempSquares.splice(tempSquares.indexOf(a),1);
 		}
 	});

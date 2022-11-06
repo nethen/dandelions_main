@@ -76,6 +76,7 @@ class Square {
 }
 
 let squares = []
+let placeholders = []
 
 function preload() {
  img = loadImage("assets/asset.png");
@@ -101,13 +102,27 @@ function setup() {
   socket.on('serverRefresh',(data) => {
     if (data) {
       console.log(data); 
-      data.forEach((element) => {
-        rippleAdjacent(element);
-      });
+      // data.forEach((element) => {
+      //   rippleAdjacent(element);
+      // });
       if (moveChosen != null)squares.find((element) => element.position.x == moveChosen.x && element.position.y == moveChosen.y).selected = false;
       moveChosen = null;
       updateImg();
       
+    }
+  });
+
+  socket.on('rippleSquares',(data) => {
+    if (data) {
+
+      data.forEach(element => {
+        const centerSquare = element.state.owner;
+
+        const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
+
+        correspondingSquare.ripple(element.state.state);
+        correspondingSquare.startMoving();
+      })
     }
   });
 }
