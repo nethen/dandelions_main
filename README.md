@@ -1,3 +1,5 @@
 # dandelions_main
-Apple bottom jeans :) 
-boots with the furrr
+To use this program:
+
+npm install
+node app.js
