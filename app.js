@@ -57,7 +57,7 @@ let serverRefresh = setInterval(function(){
 	rippleSquares.forEach(element => {
 		element.state = element.state[0];
 	});
-
+	placeholders=[];
 	io.emit('serverRefresh', tempSquares); 
 
 	tempSquares.forEach((element) => {
@@ -76,8 +76,8 @@ let serverRefresh = setInterval(function(){
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 
-	socket.emit('squareRequest', loadSquares);
-	socket.emit('pRequest', placeholders);
+	socket.emit('squareRequest', [loadSquares,placeholders]);
+	//socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
 	

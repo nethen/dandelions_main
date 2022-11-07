@@ -104,31 +104,27 @@ function setup() {
   socket.on('connect', function() {
     const sessionID = socket.id; 
     id = sessionID;
-    console.log(id);
   });
 
   socket.on('squareRequest',(x) => {
-    x.forEach(function(square){
+    //tile load
+    x[0].forEach(function(square){
       squares.push(new Square(square.position.x, square.position.y, Math.pow(2,1 + square.state)));
+    });
+    //placeholder load
+    x[1].forEach(function(element){
+      let a = squares.find(square => square.position.x == element.x && square.position.y == element.y);
+      if (a){
+        if (element.onCanvas == true){
+          a.selected = element.id;
+        } else {
+          a.selected = "";
+        }
+      }
     });
 
   });
 
-  socket.on('pRequest',(data) => {
-      let a = squares.find(square => square.position.x == data.x && square.position.y == data.y);
-      console.log(a);
-      if (a){
-        if (data.onCanvas == true){
-          console.log(true)
-          a.selected = data.id;
-        } else {
-          console.log(false)
-          a.selected = "";
-        }
-        console.log(a.selected);
-      }
-
-  });
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
   noSmooth();
   frameRate(30);
@@ -136,25 +132,13 @@ function setup() {
   //One time listeners go into setup
   socket.on('placeholderUpdate',(data) => {
     if (data) {
-      console.log("Data received:");
-      // console.log(data.x); 
-      // console.log(squares[0].position.x); 
-      // console.log(squares[0].position.x == data.x && squares[0].position.y == data.y); 
-      // let x = data.x;
-      // let y = data.y;
-      // console.log(squares[0].position.x == x); 
-      //const a = squares.find(element => {element.position.x == data.x && element.position.y == data.y});
       let a = squares.find(square => square.position.x == data.x && square.position.y == data.y);
-      console.log(a);
       if (a){
         if (data.onCanvas == true){
-          console.log(true)
           a.selected = data.id;
         } else {
-          console.log(false)
           a.selected = "";
         }
-        console.log(a.selected);
       }
     }
   });
@@ -167,7 +151,9 @@ function setup() {
       // });
       if (moveChosen != null)squares.find((element) => element.position.x == moveChosen.x && element.position.y == moveChosen.y).selected = false;
       moveChosen = null;
-      placeholders = [];
+      squares.forEach(element => {
+        element.selected ="";
+      })
       updateImg();
       
     }
@@ -200,7 +186,7 @@ function mouseClicked() {
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
 
   const clickedSquare = squares.find(active);
-  if (clickedSquare){
+  if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == id)){
     let bool = false
     if (moveChosen === null){
       bool = true;
