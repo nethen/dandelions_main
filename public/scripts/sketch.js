@@ -7,6 +7,7 @@ const CANVAS_COUNT = 100;
 const MOVING_COUNT = 20;
 const TIMER_DURATION = 10;
 let socket;
+let id;
 let globalImg;
 let moveChosen = null;
 
@@ -20,7 +21,8 @@ class Square {
     this.srcWidth = state;
     this.counterB = 100;
     this.moving = false;
-    this.selected = false;
+    this.selected = "";
+    this.selectedID = "";
 //    this.currImg = globalImg;
   }
   
@@ -31,11 +33,20 @@ class Square {
     //image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.counter, this.counter);
     //if (this.selected) image(,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
     image(globalImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
-    if (this.selected){
+    smooth();
+    if (this.selected == id){
       fill(0,0,255);
-      ellipse(16,16,32,32);
+      ellipse(16,16,20,20);
       noFill();
+    } else if (this.selected.length > 0){
+      stroke(0);
+      strokeWeight(2);
+      fill(255);
+      ellipse(16,16,20,20);
+      noFill();
+      noStroke();
     }
+    noSmooth();
     pop();
   }
   
@@ -88,10 +99,34 @@ function preload() {
 function setup() {
   //socket = io.connect('http://localhost:3000')
   socket = io.connect('dandelions-iat222.herokuapp.com')
+
+  //establish ID
+  socket.on('connect', function() {
+    const sessionID = socket.id; 
+    id = sessionID;
+    console.log(id);
+  });
+
   socket.on('squareRequest',(x) => {
     x.forEach(function(square){
       squares.push(new Square(square.position.x, square.position.y, Math.pow(2,1 + square.state)));
     });
+
+  });
+
+  socket.on('pRequest',(data) => {
+      let a = squares.find(square => square.position.x == data.x && square.position.y == data.y);
+      console.log(a);
+      if (a){
+        if (data.onCanvas == true){
+          console.log(true)
+          a.selected = data.id;
+        } else {
+          console.log(false)
+          a.selected = "";
+        }
+        console.log(a.selected);
+      }
 
   });
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
@@ -99,14 +134,40 @@ function setup() {
   frameRate(30);
 
   //One time listeners go into setup
+  socket.on('placeholderUpdate',(data) => {
+    if (data) {
+      console.log("Data received:");
+      // console.log(data.x); 
+      // console.log(squares[0].position.x); 
+      // console.log(squares[0].position.x == data.x && squares[0].position.y == data.y); 
+      // let x = data.x;
+      // let y = data.y;
+      // console.log(squares[0].position.x == x); 
+      //const a = squares.find(element => {element.position.x == data.x && element.position.y == data.y});
+      let a = squares.find(square => square.position.x == data.x && square.position.y == data.y);
+      console.log(a);
+      if (a){
+        if (data.onCanvas == true){
+          console.log(true)
+          a.selected = data.id;
+        } else {
+          console.log(false)
+          a.selected = "";
+        }
+        console.log(a.selected);
+      }
+    }
+  });
+
   socket.on('serverRefresh',(data) => {
     if (data) {
-      console.log(data); 
+      //console.log(data); 
       // data.forEach((element) => {
       //   rippleAdjacent(element);
       // });
       if (moveChosen != null)squares.find((element) => element.position.x == moveChosen.x && element.position.y == moveChosen.y).selected = false;
       moveChosen = null;
+      placeholders = [];
       updateImg();
       
     }
@@ -144,11 +205,11 @@ function mouseClicked() {
     if (moveChosen === null){
       bool = true;
       moveChosen = {x: clickedSquare.position.x, y: clickedSquare.position.y};
-      clickedSquare.selected = true;
+      //clickedSquare.selected = id;
     } else{
       if (clickedSquare.selected){
         moveChosen = null;
-        clickedSquare.selected = false;
+        //clickedSquare.selected = "";
       }
     }
   /*if (clickedSquare.moving === true) return;

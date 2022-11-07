@@ -19,6 +19,8 @@ class SquareHolder2 {
 let loadSquares = [];
 let tempSquares = [];
 let rippleSquares =[];
+let placeholders = [];
+
 const SQUARES = 100;
 
 const http = require('http')
@@ -75,6 +77,7 @@ io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 
 	socket.emit('squareRequest', loadSquares);
+	socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
 	
@@ -85,7 +88,8 @@ io.sockets.on('connection', (socket) => {
 		//CHECK IF USER IS SELECTING TILE
 		if (data.selected === true) {
 			tempSquares.push(new SquareHolder2(data.position.x, data.position.y, data.state));
-
+			placeholders.push({x: data.position.x, y: data.position.y, id: socket.id, onCanvas: true});
+			io.emit('placeholderUpdate',{x: data.position.x, y: data.position.y, id: socket.id, onCanvas: true});
 			//Iterate in a 3x3 area around selected tile
 			for (let i = 0; i < 3; i++){
 				for (let j = 0; j < 3; j++){
@@ -107,6 +111,9 @@ io.sockets.on('connection', (socket) => {
 		}
 		//CHECK IF USER IS DESELECTING TILE
 		else if (data.selected === false){
+			io.emit('placeholderUpdate',{x: data.position.x, y: data.position.y, id: socket.id, onCanvas: false});
+			const b = placeholders.find(element => element.x == data.position.x && element.y == data.position.y)
+			placeholders.splice(placeholders.indexOf(b), 1);
 			const a = tempSquares.find((element) => element.position.x == data.position.x && element.position.y == element.position.y);
 			//remove states of ripple tiles owned by previously selected
 			if (a){
