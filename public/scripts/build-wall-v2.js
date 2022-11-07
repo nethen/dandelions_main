@@ -137,6 +137,8 @@ function mouseClicked() {
     for(let i=0; i<placeablePos.length;i++){
         if(mouseX > placeablePos[i].x && mouseX < placeablePos[i].x + 32  && mouseY > placeablePos[i].y && mouseY < placeablePos[i].y + 32){
             squares.push(new Square(placeablePos[i].x, placeablePos[i].y, Math.pow(2,1 + square.state)));
+            placeablePos.push({x: placeablePos[i].x+32, y: placeablePos[i].y}, {x: placeablePos[i].x-32, y: placeablePos[i].y}, {x: placeablePos[i].x, y: placeablePos[i].y+32}, {x: placeablePos[i].x, y: placeablePos[i].y-32});
+            placeablePos.splice(i,1);
         }
     }
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
