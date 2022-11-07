@@ -84,9 +84,11 @@ function setup() {
   //Connect to server (localhost for debug)
   //socket = io.connect('http://localhost:3000')
   socket = io.connect('dandelions-iat222.herokuapp.com')
-
+  socket.on('timer', function(data) {
+    document.querySelector('#counter').innerText =data.countdown;
+  });
   //Check for incoming tile data on first load
-  socket.on('squareRequest',(x) => {
+  socket.on('pageLoad',(x) => {
     //Get first half of the packet (tile positions + states)
     x[0].forEach(function(square){
       //Add linearly into array for iteration
@@ -141,8 +143,6 @@ function setup() {
     if (data) {
 
       data.forEach(element => {
-        const centerSquare = element.state.owner;
-
         const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
 
         correspondingSquare.ripple(element.state.state);

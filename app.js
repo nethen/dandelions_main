@@ -71,12 +71,20 @@ let serverRefresh = setInterval(function(){
 	io.emit('rippleSquares', rippleSquares);
 	tempSquares = [];
 	rippleSquares = [];
-}, 10000);
+	countdown = 11;
+}, 11000);
+
+var countdown = 11;
+setInterval(function() {
+  countdown--;
+  io.sockets.emit('timer', {countdown: countdown});
+  console.log(countdown);
+}, 1000);
 
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 
-	socket.emit('squareRequest', [loadSquares,placeholders]);
+	socket.emit('pageLoad', [loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
