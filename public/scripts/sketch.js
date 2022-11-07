@@ -1,135 +1,114 @@
 p5.disableFriendlyErrors = true; // disables FES
 
-const SQUARE_SIZE = 2;
+//instantiate constants and global vars
 const IMG_SIZE = 32;
-const SQUARE_COUNT = 16;
 const CANVAS_COUNT = 100;
-const MOVING_COUNT = 20;
 const TIMER_DURATION = 10;
 let socket;
 let id;
-let globalImg;
 let moveChosen = null;
 
+//encapsulate data related to tiles
 class Square {
   constructor(x,y, state){
+    //position relative to client & server (currently same)
     this.position = {x: x, y: y};
     this.globalPos = {x: x, y: y};
+
+    //current number of divisions in checkerboard & previous reference
     this.state = state;
     this.pState = state;
+
+    //counter variable for animation
     this.counter = TIMER_DURATION;
     this.srcWidth = state;
-    this.counterB = 100;
     this.moving = false;
+
+    //owner of selected tile
     this.selected = "";
-    this.selectedID = "";
-//    this.currImg = globalImg;
   }
-  
-
+  //changed display method to image-based rendering (avoid load on p5js)
   display(){
-    push();
-    translate(this.position.x, this.position.y);
-    //image(this.currImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.counter, this.counter);
-    //if (this.selected) image(,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
-    image(globalImg,0,0,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
-    smooth();
-    if (this.selected == id){
-      fill(0,0,255);
-      ellipse(16,16,20,20);
-      noFill();
-    } else if (this.selected.length > 0){
-      stroke(0);
-      strokeWeight(2);
-      fill(255);
-      ellipse(16,16,20,20);
-      noFill();
-      noStroke();
+    //if selected, make tile gray
+    if (this.selected.length > 0){
+      image(imgAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+      //check if current client selected tile
+      if (this.selected == socket.id){
+        image(client,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+      } 
+      //otherwise, indicate alternate socket selected tile
+      else{
+        image(clientAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+      }
     }
-    noSmooth();
-    pop();
-  }
-  
-  // updateImg(){
-  //   if (this.currImg === img) this.currImg = img2;
-  //   else this.currImg = img;
-  // }
-
-  updateMoving(){
-    this.moving = !this.moving;
+    //otherwise, default to black tile
+    else image(img,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
   }
 
-  updateState(){
-    this.state *= 2;
-    if (this.state > 32) this.state = 2;
-  }
-
+  //calculate new state to animate into
   ripple(comparedState){
     if (this.state < comparedState) this.state *= 2;
     else if (this.state > comparedState) this.state /= 2;
   }
 
-    startMoving(){
-      this.moving = true;
-      this.counter = 0;
-    }
+  //allow animation
+  startMoving(){
+    this.moving = true;
+    this.counter = 0;
+  }
 
-    update(){
-      if (this.moving && this.counter < TIMER_DURATION){
-        this.counter ++;
-        this.srcWidth += ((this.state - this.pState)/TIMER_DURATION);
-        if (this.counter >= TIMER_DURATION){
-          this.moving = false;
-          this.pState = this.state;
-        }
+  //animate tile when states change
+  update(){
+    if (this.moving && this.counter < TIMER_DURATION){
+      this.counter ++;
+      this.srcWidth += ((this.state - this.pState)/TIMER_DURATION);
+      if (this.counter >= TIMER_DURATION){
+        this.moving = false;
+        this.pState = this.state;
       }
     }
+  }
 }
 
 let squares = []
-let placeholders = []
 
+//load all images ahead of intial paint (first draw)
 function preload() {
- img = loadImage("assets/asset.png");
- img2 = loadImage("assets/asset2.png");
- img3 = loadImage("assets/asset3.png");
- globalImg = img;
+ img = loadImage("assets/checker.png");
+ imgAlt = loadImage("assets/checker_alt.png");
+ client=loadImage("assets/client.png");
+ clientAlt=loadImage("assets/client_alt.png");
 }
 
 function setup() {
+  //Connect to server (localhost for debug)
   //socket = io.connect('http://localhost:3000')
   socket = io.connect('dandelions-iat222.herokuapp.com')
 
-  //establish ID
-  socket.on('connect', function() {
-    const sessionID = socket.id; 
-    id = sessionID;
-  });
-
+  //Check for incoming tile data on first load
   socket.on('squareRequest',(x) => {
-    //tile load
+    //Get first half of the packet (tile positions + states)
     x[0].forEach(function(square){
+      //Add linearly into array for iteration
       squares.push(new Square(square.position.x, square.position.y, Math.pow(2,1 + square.state)));
     });
-    //placeholder load
+    //Get second half (selected tile positions & owners)
     x[1].forEach(function(element){
+      //Find corresponding tile position in client cells. If a match is found, indicate client who made move
       let a = squares.find(square => square.position.x == element.x && square.position.y == element.y);
-      if (a){
-        if (element.onCanvas == true){
-          a.selected = element.id;
-        } else {
-          a.selected = "";
-        }
-      }
+      if (a) a.selected = element.id;
     });
 
   });
 
-  createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
+  //Set up drawing conditions
+  createCanvas(IMG_SIZE*CANVAS_COUNT, IMG_SIZE*CANVAS_COUNT);
   noSmooth();
   frameRate(30);
 
-  //One time listeners go into setup
+  //ONE TIME SOCKET LISTENERS GO INTO SETUP
+
+  //If any placeholders are added, update canvas
   socket.on('placeholderUpdate',(data) => {
     if (data) {
       let a = squares.find(square => square.position.x == data.x && square.position.y == data.y);
@@ -143,6 +122,7 @@ function setup() {
     }
   });
 
+  //After the buffer period, clear all data
   socket.on('serverRefresh',(data) => {
     if (data) {
       //console.log(data); 
@@ -154,8 +134,6 @@ function setup() {
       squares.forEach(element => {
         element.selected ="";
       })
-      updateImg();
-      
     }
   });
 
@@ -174,6 +152,7 @@ function setup() {
   });
 }
 
+//Display all tiles every 0.3s
 function draw() {
   background(255);
   for (let i = 0; i < squares.length; i++){
@@ -182,33 +161,27 @@ function draw() {
   }
 }
 
+//Click callback
 function mouseClicked() {
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
 
   const clickedSquare = squares.find(active);
-  if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == id)){
+  if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
     let bool = false
     if (moveChosen === null){
       bool = true;
       moveChosen = {x: clickedSquare.position.x, y: clickedSquare.position.y};
-      //clickedSquare.selected = id;
     } else{
       if (clickedSquare.selected){
         moveChosen = null;
-        //clickedSquare.selected = "";
       }
     }
-  /*if (clickedSquare.moving === true) return;
-
-    clickedSquare.updateState();
-    clickedSquare.startMoving();
-    //rippleAdjacent(clickedSquare);
-    */
     
     socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
   }
 }
 
+//
 const rippleAdjacent = (centerSquare) => {
   const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-centerSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-centerSquare.position.y) < IMG_SIZE*2) && square != centerSquare));
   
@@ -219,10 +192,3 @@ const rippleAdjacent = (centerSquare) => {
     adjacentSquares[i].startMoving();
   }
 }
-
-
-const updateImg = () => {
-  if (globalImg === img) globalImg = img2;
-  else globalImg = img;
-}
-
