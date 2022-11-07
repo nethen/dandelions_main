@@ -6,9 +6,12 @@ const SQUARE_COUNT = 16;
 const CANVAS_COUNT = 10;
 const MOVING_COUNT = 20;
 const TIMER_DURATION = 10;
+const CLICK_DELAY = 10;
 let socket;
 let globalImg;
 let moveChosen = null;
+let placeDelay = false;
+let placeCounter = 0;
 
 class Square {
   constructor(x,y, state){
@@ -78,6 +81,7 @@ class Square {
 let squares = []
 let placeholders = []
 let placeablePos = [{x:128, y:96}, {x:160, y:128}, {x:96, y:128}, {x:128, y:160}]
+let occupiedCells = [];
 
 function preload() {
  img = loadImage("assets/asset.png");
@@ -91,6 +95,7 @@ function setup() {
   //socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('squareRequest',(x) => {
       squares.push(new Square(128, 128, Math.pow(2,1 + square.state)));
+      occupiedCells.push({x: 128, y:128});
   });
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
   noSmooth();
@@ -131,16 +136,38 @@ function draw() {
     squares[i].display();
     squares[i].update();
   }
+  if(placeDelay){
+    if(placeCounter<CLICK_DELAY){
+      placeCounter++;
+      console.log(placeCounter);
+    }else{
+      placeDelay=false;
+      placeCounter=0;
+    }
+  }
 }
 
 function mouseClicked() {
+  if(!placeDelay){
+    for(let i=0; i<placeablePos.length;i++){
+      for(let j=0; j<occupiedCells.length;j++){
+        if(placeablePos[i] === occupiedCells[j]){
+          placeablePos.splice(i,1);
+        }
+      }
+    }
+ 
     for(let i=0; i<placeablePos.length;i++){
         if(mouseX > placeablePos[i].x && mouseX < placeablePos[i].x + 32  && mouseY > placeablePos[i].y && mouseY < placeablePos[i].y + 32){
             squares.push(new Square(placeablePos[i].x, placeablePos[i].y, Math.pow(2,1 + square.state)));
             placeablePos.push({x: placeablePos[i].x+32, y: placeablePos[i].y}, {x: placeablePos[i].x-32, y: placeablePos[i].y}, {x: placeablePos[i].x, y: placeablePos[i].y+32}, {x: placeablePos[i].x, y: placeablePos[i].y-32});
             placeablePos.splice(i,1);
+            occupiedCells.push({x: placeablePos[i].x, y: placeablePos[i].y})
+            console.log("tile placed");
         }
     }
+    placeDelay = true;
+  }
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
 
   const clickedSquare = squares.find(active);
