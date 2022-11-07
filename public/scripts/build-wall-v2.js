@@ -76,6 +76,8 @@ class Square {
 }
 
 let squares = []
+let placeholders = []
+let placeablePos = [{x:128, y:96}, {x:160, y:128}, {x:96, y:128}, {x:128, y:160}]
 
 function preload() {
  img = loadImage("assets/asset.png");
@@ -88,15 +90,8 @@ function setup() {
   socket = io.connect('http://localhost:3000')
   //socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('squareRequest',(x) => {
-    x.forEach(function(square){
-      if(square.position.x == 128 && square.position.y == 128){
-        squares.push(new Square(square.position.x, square.position.y, 0));
-      }else{
-        squares.push(new Square(square.position.x, square.position.y, 4));
-      }
-    });
+      squares.push(new Square(128, 128, Math.pow(2,1 + square.state)));
   });
-
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
   noSmooth();
   frameRate(30);
@@ -105,13 +100,27 @@ function setup() {
   socket.on('serverRefresh',(data) => {
     if (data) {
       console.log(data); 
-      data.forEach((element) => {
-        rippleAdjacent(element);
-      });
+      // data.forEach((element) => {
+      //   rippleAdjacent(element);
+      // });
       if (moveChosen != null)squares.find((element) => element.position.x == moveChosen.x && element.position.y == moveChosen.y).selected = false;
       moveChosen = null;
       updateImg();
       
+    }
+  });
+
+  socket.on('rippleSquares',(data) => {
+    if (data) {
+
+      data.forEach(element => {
+        const centerSquare = element.state.owner;
+
+        const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
+
+        correspondingSquare.ripple(element.state.state);
+        correspondingSquare.startMoving();
+      })
     }
   });
 }
@@ -125,6 +134,11 @@ function draw() {
 }
 
 function mouseClicked() {
+    for(let i=0; i<placeablePos.length;i++){
+        if(mouseX > placeablePos[i].x && mouseX < placeablePos[i].x + 32  && mouseY > placeablePos[i].y && mouseY < placeablePos[i].y + 32){
+            squares.push(new Square(placeablePos[i].x, placeablePos[i].y, Math.pow(2,1 + square.state)));
+        }
+    }
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
 
   const clickedSquare = squares.find(active);
@@ -140,7 +154,6 @@ function mouseClicked() {
         clickedSquare.selected = false;
       }
     }
-    clickedSquare.state = 0;
   /*if (clickedSquare.moving === true) return;
 
     clickedSquare.updateState();
@@ -148,7 +161,7 @@ function mouseClicked() {
     //rippleAdjacent(clickedSquare);
     */
     
-    //socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
+    socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
   }
 }
 
@@ -168,3 +181,4 @@ const updateImg = () => {
   if (globalImg === img) globalImg = img2;
   else globalImg = img;
 }
+

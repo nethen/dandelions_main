@@ -81,7 +81,6 @@ io.sockets.on('connection', (socket) => {
 	//ON USER ACTION
 	socket.on('squareUpdate',(data) => {
 		//console.log(data);
-
 		//CHECK IF USER IS SELECTING TILE
 		if (data.selected === true) {
 			tempSquares.push(new SquareHolder2(data.position.x, data.position.y, data.state));
