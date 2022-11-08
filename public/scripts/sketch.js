@@ -1,19 +1,20 @@
 p5.disableFriendlyErrors = true; // disables FES
 
 //instantiate constants and global vars
-const IMG_SIZE = 32;
+const IMG_SIZE = 64;
 const CANVAS_COUNT = 100;
 const TIMER_DURATION = 10;
 let socket;
 let id;
 let moveChosen = null;
+let globalPos;
 
 //encapsulate data related to tiles
 class Square {
   constructor(x,y, state){
     //position relative to client & server (currently same)
     this.position = {x: x, y: y};
-    this.globalPos = {x: x, y: y};
+    //this.globalPos = {x: x, y: y};
 
     //current number of divisions in checkerboard & previous reference
     this.state = state;
@@ -88,19 +89,23 @@ function setup() {
     document.querySelector('#counter').innerText =data.countdown;
   });
   //Check for incoming tile data on first load
-  socket.on('pageLoad',(x) => {
+  socket.on('pageLoad',(data) => {
+    squares = [];
+    globalPos = {x: data[0].x * IMG_SIZE, y: data[0].y * IMG_SIZE}
     //Get first half of the packet (tile positions + states)
-    x[0].forEach(function(square){
-      //Add linearly into array for iteration
-      squares.push(new Square(square.position.x, square.position.y, Math.pow(2,1 + square.state)));
+    data[1].forEach(function(square){
+      //Add linearly into array for iteration (2 + x = starting position (2 = power 2 for start @ 4))
+      squares.push(new Square(square.position.x, square.position.y, Math.pow(2,2 + square.state)));
     });
     //Get second half (selected tile positions & owners)
-    x[1].forEach(function(element){
+    data[2].forEach(function(element){
       //Find corresponding tile position in client cells. If a match is found, indicate client who made move
       let a = squares.find(square => square.position.x == element.x && square.position.y == element.y);
       if (a) a.selected = element.id;
     });
-
+    //squares = squares.filter(element => {element.position.x < globalPos.x + 320 && element.position.x >= globalPos.x && element.position.y < globalPos.y + 320 && element.position.y >= globalPos.y});
+    //squares = squares.filter(element => element.position.x < globalPos.x + IMG_SIZE*10 && element.position.x >= globalPos.x && element.position.y < globalPos.y + IMG_SIZE*10 && element.position.y >= globalPos.y);
+    //console.log(squares);
   });
 
   //Set up drawing conditions

@@ -14,6 +14,7 @@ let placeholders = [];
 
 //Size of canvas
 const SQUARES = 100;
+const SIZE = 64;
 
 //Set up connection
 const http = require('http')
@@ -30,10 +31,15 @@ server.on('listening', () => {
  console.log('Listening on port '+PORT)
 })
 
+const calcripple = (comparedState, updateState) => {
+    if (updateState.state < Math.log2(comparedState.state.state)-2) updateState.state ++;
+    else if (updateState.state > Math.log2(comparedState.state.state)-2) updateState.state --;
+  }
+
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	loadSquares.push(new SquareHolder(i * 32,j * 32, Math.floor(Math.random() * 5)));
+    	loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, Math.floor(Math.random() * 5)));
     }
   }
 
@@ -54,7 +60,7 @@ let serverRefresh = setInterval(function(){
 
 	//clear placeholders
 	placeholders=[];
-
+	
 	
 	io.emit('serverRefresh', tempSquares); 
 
@@ -63,7 +69,12 @@ let serverRefresh = setInterval(function(){
 		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
 		// console.log( Math.log2(element.state) - 1);
 		// console.log(a);
-		a.state = Math.log2(element.state) - 1;
+		//a.state = Math.log2(element.state) - 1;
+	});
+
+	loadSquares.forEach((element) => {
+		const a = rippleSquares.find(newElement => newElement.position.x == element.position.x &&  newElement.position.y == element.position.y)	
+		if (a) calcripple(a, element);
 	});
 	//if (rippleSquares) console.log(rippleSquares);
 	io.emit('rippleSquares', rippleSquares);
@@ -76,13 +87,12 @@ var countdown = 11;
 setInterval(function() {
   countdown--;
   io.sockets.emit('timer', {countdown: countdown});
-  console.log(countdown);
 }, 1000);
 
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 
-	socket.emit('pageLoad', [loadSquares,placeholders]);
+	socket.emit('pageLoad', [{x: Math.floor(Math.random()*5), y: Math.floor(Math.random()*5)},loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
@@ -99,8 +109,8 @@ io.sockets.on('connection', (socket) => {
 			//Iterate in a 3x3 area around selected tile
 			for (let i = 0; i < 3; i++){
 				for (let j = 0; j < 3; j++){
-					let tempX = data.position.x + (32 * i) - 32;
-					let tempY = data.position.y + (32 * j) - 32;
+					let tempX = data.position.x + (SIZE * i) - SIZE;
+					let tempY = data.position.y + (SIZE * j) - SIZE;
 
 					if (tempX >= 0 && tempY >= 0){
 						//Isolate tiles surrounding selected cell
