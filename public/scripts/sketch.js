@@ -82,8 +82,8 @@ function preload() {
 
 function setup() {
   //Connect to server (localhost for debug)
-  //socket = io.connect('http://localhost:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  socket = io.connect('http://localhost:3000')
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('timer', function(data) {
     document.querySelector('#counter').innerText =data.countdown;
   });
@@ -113,8 +113,10 @@ function setup() {
   //If any placeholders are added, update canvas
   socket.on('placeholderUpdate',(data) => {
     if (data) {
+      //Find corresponding square to position in placeholder
       let a = squares.find(square => square.position.x == data.x && square.position.y == data.y);
       if (a){
+        //Assign owner/lack of owner based on command issued
         if (data.onCanvas == true){
           a.selected = data.id;
         } else {
@@ -131,7 +133,8 @@ function setup() {
       // data.forEach((element) => {
       //   rippleAdjacent(element);
       // });
-      if (moveChosen != null)squares.find((element) => element.position.x == moveChosen.x && element.position.y == moveChosen.y).selected = false;
+
+      //Remove saved chosen tile & deselect all tiles
       moveChosen = null;
       squares.forEach(element => {
         element.selected ="";
@@ -139,12 +142,13 @@ function setup() {
     }
   });
 
+  //Animation callback
   socket.on('rippleSquares',(data) => {
     if (data) {
-
+      //Find corresponding square to position in data & update state based on owner of ripple tile
       data.forEach(element => {
         const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
-
+        //Start animation
         correspondingSquare.ripple(element.state.state);
         correspondingSquare.startMoving();
       })
@@ -163,25 +167,30 @@ function draw() {
 
 //Click callback
 function mouseClicked() {
+  //Find tile that was clicked
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
-
   const clickedSquare = squares.find(active);
+  //If the tile is not selected or is owned by current client
   if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
+    //Make a boolean variable for sending command to server
     let bool = false
+    //If a move is not chosen, prepare boolean to let server know that it will be selected
     if (moveChosen === null){
       bool = true;
       moveChosen = {x: clickedSquare.position.x, y: clickedSquare.position.y};
-    } else{
+    }
+    //Otherwise, deselect tile 
+    else{
       if (clickedSquare.selected){
         moveChosen = null;
       }
     }
-    
+    //Send data of tile being selected to server
     socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
   }
 }
 
-//
+//Ripple command based on central square (defunct)
 const rippleAdjacent = (centerSquare) => {
   const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-centerSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-centerSquare.position.y) < IMG_SIZE*2) && square != centerSquare));
   
