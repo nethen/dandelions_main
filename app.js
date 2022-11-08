@@ -1,28 +1,21 @@
+//Object for loading tile data
 class SquareHolder {
-	constructor (x, y){
-		this.position = {x: x, y: y};
-		this.state = Math.floor(Math.random() * 5);
-	}
-
-
-}
-
-class SquareHolder2 {
 	constructor (x, y, state){
 		this.position = {x: x, y: y};
 		this.state = state;
 	}
-
-
 }
 
+//Container arrays for sending data
 let loadSquares = [];
 let tempSquares = [];
 let rippleSquares =[];
 let placeholders = [];
 
+//Size of canvas
 const SQUARES = 100;
 
+//Set up connection
 const http = require('http')
 const express = require('express')
 const PORT = process.env.PORT || 3000
@@ -37,9 +30,10 @@ server.on('listening', () => {
  console.log('Listening on port '+PORT)
 })
 
+//Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	loadSquares.push(new SquareHolder(i * 32,j * 32));
+    	loadSquares.push(new SquareHolder(i * 32,j * 32, Math.floor(Math.random() * 5)));
     }
   }
 
@@ -57,7 +51,11 @@ let serverRefresh = setInterval(function(){
 	rippleSquares.forEach(element => {
 		element.state = element.state[0];
 	});
+
+	//clear placeholders
 	placeholders=[];
+
+	
 	io.emit('serverRefresh', tempSquares); 
 
 	tempSquares.forEach((element) => {
@@ -95,7 +93,7 @@ io.sockets.on('connection', (socket) => {
 
 		//CHECK IF USER IS SELECTING TILE
 		if (data.selected === true) {
-			tempSquares.push(new SquareHolder2(data.position.x, data.position.y, data.state));
+			tempSquares.push(new SquareHolder(data.position.x, data.position.y, data.state));
 			placeholders.push({x: data.position.x, y: data.position.y, id: socket.id, onCanvas: true});
 			io.emit('placeholderUpdate',{x: data.position.x, y: data.position.y, id: socket.id, onCanvas: true});
 			//Iterate in a 3x3 area around selected tile
@@ -111,7 +109,7 @@ io.sockets.on('connection', (socket) => {
 							const a = rippleSquares.find(element => element.position.x == tempX && element.position.y == tempY);
 							//console.log(a);
 							if (a) a.state.push({owner: data.position, state: data.state});
-							else rippleSquares.push(new SquareHolder2(tempX, tempY, [{owner: data.position, state: data.state}]));
+							else rippleSquares.push(new SquareHolder(tempX, tempY, [{owner: data.position, state: data.state}]));
 						}
 					}
 				}
