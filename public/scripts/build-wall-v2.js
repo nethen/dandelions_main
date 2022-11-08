@@ -136,6 +136,7 @@ function draw() {
     squares[i].display();
     squares[i].update();
   }
+
   if(placeDelay){
     if(placeCounter<CLICK_DELAY){
       placeCounter++;
@@ -149,23 +150,27 @@ function draw() {
 
 function mouseClicked() {
   if(!placeDelay){
+
+    let tempSquare;
+
     for(let i=0; i<placeablePos.length;i++){
-      for(let j=0; j<occupiedCells.length;j++){
-        if(placeablePos[i] === occupiedCells[j]){
-          placeablePos.splice(i,1);
-        }
+      if(mouseX > placeablePos[i].x && mouseX < placeablePos[i].x + 32  && mouseY > placeablePos[i].y && mouseY < placeablePos[i].y + 32){
+        tempSquare = new Square(placeablePos[i].x, placeablePos[i].y, Math.pow(2,1 + square.state));
+        console.log(occupiedCells.find(pos => pos == {x: tempSquare.position.x, y:tempSquare.position.y}));
+          if(occupiedCells.find(pos => pos == {x: tempSquare.position.x, y:tempSquare.position.y}) == undefined){
+            squares.push(tempSquare);
+            occupiedCells.push({x: tempSquare.position.x, y: tempSquare.position.y});
+            let tempIndex = placeablePos.indexOf({x: tempSquare.position.x, y: tempSquare.position.y});
+            placeablePos.splice(tempIndex,1);
+          }
       }
     }
- 
-    for(let i=0; i<placeablePos.length;i++){
-        if(mouseX > placeablePos[i].x && mouseX < placeablePos[i].x + 32  && mouseY > placeablePos[i].y && mouseY < placeablePos[i].y + 32){
-            squares.push(new Square(placeablePos[i].x, placeablePos[i].y, Math.pow(2,1 + square.state)));
-            placeablePos.push({x: placeablePos[i].x+32, y: placeablePos[i].y}, {x: placeablePos[i].x-32, y: placeablePos[i].y}, {x: placeablePos[i].x, y: placeablePos[i].y+32}, {x: placeablePos[i].x, y: placeablePos[i].y-32});
-            placeablePos.splice(i,1);
-            occupiedCells.push({x: placeablePos[i].x, y: placeablePos[i].y})
-            console.log("tile placed");
-        }
-    }
+
+
+
+    console.log(placeablePos);
+    console.log(occupiedCells);
+
     placeDelay = true;
   }
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
@@ -211,3 +216,33 @@ const updateImg = () => {
   else globalImg = img;
 }
 
+function findPlaceable(square){
+  let tempPlaceable = [];
+  //tempPlaceable.push({x: square.position.x + 32, y: square.position.y}, {x: square.position.x - 32, y: square.position.y}, {x: square.position.x, y: square.position.y + 32}, {x: square.position.x, y: square.position.y - 32},)
+  if(occupiedCells.indexOf({x: square.position.x + 32, y: square.position.y}) == -1 && placeablePos.indexOf({x: square.position.x + 32, y: square.position.y}) == -1){
+    tempPlaceable.push({x: square.position.x + 32, y: square.position.y});
+  }
+  if(occupiedCells.indexOf({x: square.position.x - 32, y: square.position.y}) == -1 && placeablePos.indexOf({x: square.position.x + 32, y: square.position.y}) == -1){
+    tempPlaceable.push({x: square.position.x - 32, y: square.position.y});
+  }
+  if(occupiedCells.indexOf({x: square.position.x, y: square.position.y + 32}) == -1 && placeablePos.indexOf({x: square.position.x + 32, y: square.position.y}) == -1){
+    tempPlaceable.push({x: square.position.x, y: square.position.y + 32});
+  }
+  if(occupiedCells.indexOf({x: square.position.x, y: square.position.y- 32}) == -1 && placeablePos.indexOf({x: square.position.x + 32, y: square.position.y}) == -1){
+    tempPlaceable.push({x: square.position.x, y: square.position.y - 32});
+  }
+  return(tempPlaceable);
+}
+
+function updatePlaceable(){
+  let removeThese = []
+  for(let i=0;i<occupiedCells.length;i++){
+    for(let j=0;j<placeablePos.length;j++){
+      if(occupiedCells[i].x == placeablePos[j].x && occupiedCells[i].y == placeablePos[j].y){
+        removeThese.push(j);
+      }
+    }
+  }
+  console.log(removeThese);
+  return(removeThese);
+}
