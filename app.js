@@ -31,7 +31,17 @@ server.on('listening', () => {
  console.log('Listening on port '+PORT)
 })
 
+function updatePlaceable(){
+	let filteredList = loadSquares.filter(element => element.state == -1 && 
+	 loadSquares.some(otherElement => (Math.abs(element.position.x-otherElement.position.x) == SIZE && otherElement.position.y == element.position.y && otherElement.state > -1)) ||
+	 loadSquares.some(otherElement => (Math.abs(element.position.y-otherElement.position.y) == SIZE && otherElement.position.x == element.position.x && otherElement.state > -1)));
+	
+	console.log(filteredList);
+	return(filteredList);
+  }
+
 const calcripple = (comparedState, updateState) => {
+	if (updateState.state == -1) return;
     if (updateState.state < Math.log2(comparedState.state.state)-2) updateState.state ++;
     else if (updateState.state > Math.log2(comparedState.state.state)-2) updateState.state --;
   }
@@ -39,7 +49,8 @@ const calcripple = (comparedState, updateState) => {
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, Math.floor(Math.random() * 5)));
+    	if (i == j && i == 0) loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, Math.floor(Math.random() * 5)));
+		else loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, -1));
     }
   }
 
@@ -48,6 +59,7 @@ for (let i = 0; i < SQUARES; i++){
 const io = require('socket.io')(server)
 
 let serverRefresh = setInterval(function(){
+	console.log(updatePlaceable());
 	//remove duplicates in temp inside of ripple buffer
 	tempSquares.forEach((element) => {
 		const foundDupe = rippleSquares.find(compareElement => compareElement.position.x == element.position.x && compareElement.position.y == element.position.y);
@@ -62,22 +74,22 @@ let serverRefresh = setInterval(function(){
 	placeholders=[];
 	
 	
-	io.emit('serverRefresh', tempSquares); 
+	// io.emit('serverRefresh', tempSquares); 
 
-	tempSquares.forEach((element) => {
-		const pos = element.position;
-		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
-		// console.log( Math.log2(element.state) - 1);
-		// console.log(a);
-		//a.state = Math.log2(element.state) - 1;
-	});
+	// tempSquares.forEach((element) => {
+	// 	const pos = element.position;
+	// 	const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
+	// 	// console.log( Math.log2(element.state) - 1);
+	// 	// console.log(a);
+	// 	//a.state = Math.log2(element.state) - 1;
+	// });
 
 	loadSquares.forEach((element) => {
 		const a = rippleSquares.find(newElement => newElement.position.x == element.position.x &&  newElement.position.y == element.position.y)	
 		if (a) calcripple(a, element);
 	});
 	//if (rippleSquares) console.log(rippleSquares);
-	io.emit('rippleSquares', rippleSquares);
+	io.emit('rippleSquares', [tempSquares,rippleSquares]);
 	tempSquares = [];
 	rippleSquares = [];
 	countdown = 11;
@@ -91,7 +103,7 @@ setInterval(function() {
 
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
-
+	console.log(updatePlaceable());
 	socket.emit('pageLoad', [{x: Math.floor(Math.random()*5), y: Math.floor(Math.random()*5)},loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
@@ -141,7 +153,7 @@ io.sockets.on('connection', (socket) => {
 			}
 			rippleSquares = (rippleSquares.filter(element => element.state.length > 0));
 			tempSquares.splice(tempSquares.indexOf(a),1);
-		}*/
+		}
 	});
 	socket.on('disconnect', () => console.log('Client has disconnected'))
 })

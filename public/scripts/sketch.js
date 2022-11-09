@@ -7,6 +7,7 @@ const TIMER_DURATION = 10;
 let socket;
 let id;
 let moveChosen = null;
+let moveType = Math.floor(Math.random*6) - 1;
 let globalPos;
 
 //encapsulate data related to tiles
@@ -22,14 +23,17 @@ class Square {
 
     //counter variable for animation
     this.counter = TIMER_DURATION;
-    this.srcWidth = state;
+    if (state == -1) this.srcWidth = IMG_SIZE;
+    else this.srcWidth = state;
     this.moving = false;
 
     //owner of selected tile
     this.selected = "";
+    this.selectable = false;
   }
   //changed display method to image-based rendering (avoid load on p5js)
   display(){
+    if (this.state > 0){
     //if selected, make tile gray
     if (this.selected.length > 0){
       image(imgAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
@@ -44,10 +48,24 @@ class Square {
     }
     //otherwise, default to black tile
     else image(img,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+    }
+
+    if (this.selected.length > 0){
+      //image(imgAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+      //check if current client selected tile
+      if (this.selected == socket.id){
+        image(client,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+      } 
+      //otherwise, indicate alternate socket selected tile
+      else{
+        image(clientAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+      }
+    }
   }
 
   //calculate new state to animate into
   ripple(comparedState){
+    if (this.state == -1) return;
     if (this.state < comparedState) this.state *= 2;
     else if (this.state > comparedState) this.state /= 2;
   }
@@ -83,8 +101,8 @@ function preload() {
 
 function setup() {
   //Connect to server (localhost for debug)
-  //socket = io.connect('http://localhost:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  socket = io.connect('http://localhost:3000')
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('timer', function(data) {
     document.querySelector('#counter').innerText =data.countdown;
   });
@@ -95,8 +113,13 @@ function setup() {
     //Get first half of the packet (tile positions + states)
     data[1].forEach(function(square){
       //Add linearly into array for iteration (2 + x = starting position (2 = power 2 for start @ 4))
-      squares.push(new Square(square.position.x, square.position.y, Math.pow(2,2 + square.state)));
-
+      let holdState = -1;
+      if (square.state > -1) {
+        holdState = Math.pow(2,2 + square.state);
+        //console.log(holdState);
+      }
+      squares.push(new Square(square.position.x, square.position.y, holdState));
+      //squares.push(new Square(square.position.x, square.position.y, Math.pow(2,2 + square.state)));
     });
     //Get second half (selected tile positions & owners)
     data[2].forEach(function(element){
@@ -133,7 +156,7 @@ function setup() {
   });
 
   //After the buffer period, clear all data
-  socket.on('serverRefresh',(data) => {
+ /* socket.on('serverRefresh',(data) => {
     if (data) {
       //console.log(data); 
       // data.forEach((element) => {
@@ -145,14 +168,24 @@ function setup() {
       squares.forEach(element => {
         element.selected ="";
       })
+
+      moveType = Math.floor(Math.random*6) - 1;
     }
-  });
+  });*/
 
   //Animation callback
   socket.on('rippleSquares',(data) => {
     if (data) {
+      //Remove saved chosen tile & deselect all tiles
+      moveChosen = null;
+      squares.forEach(element => {
+        element.selected ="";
+      })
+
+      moveType = Math.floor(Math.random*6) - 1;
+
       //Find corresponding square to position in data & update state based on owner of ripple tile
-      data.forEach(element => {
+      data[1].forEach(element => {
         const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
         //Start animation
         correspondingSquare.ripple(element.state.state);
@@ -192,6 +225,7 @@ function mouseClicked() {
       }
     }
     //Send data of tile being selected to server
+    console.log(clickedSquare.state);
     socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
   }
 }
