@@ -105,7 +105,7 @@ io.sockets.on('connection', (socket) => {
 			}
 		}
 		//CHECK IF USER IS DESELECTING TILE
-		else if (data.selected === false){
+		/*lse if (data.selected === false){
 			const a = tempSquares.find((element) => element.position.x == data.position.x && element.position.y == element.position.y);
 			//remove states of ripple tiles owned by previously selected
 			rippleSquares.forEach(element => {
@@ -115,7 +115,7 @@ io.sockets.on('connection', (socket) => {
 			})
 			rippleSquares = (rippleSquares.filter(element => element.state.length > 0));
 			tempSquares.splice(tempSquares.indexOf(a),1);
-		}
+		}*/
 	});
 	socket.on('disconnect', () => console.log('Client has disconnected'))
 })

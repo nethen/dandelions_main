@@ -162,16 +162,14 @@ function mouseClicked() {
 
     let tempSquare;
     placeablePos = updatePlaceable();
-    console.log(placeablePos);
 
     for(let i=0; i<placeablePos.length;i++){
       if(mouseX > placeablePos[i].position.x && mouseX < placeablePos[i].position.x + 32  && mouseY > placeablePos[i].position.y && mouseY < placeablePos[i].position.y + 32){
         //tempSquare = {x: placeablePos[i].position.x, y: placeablePos[i].position.y};
         //squares.push(tempSquare);
-        if(squares[i].position.x == placeablePos[i].position.x && squares[i].position.y == placeablePos[i].position.y){
-          squares[i].updateState();
-          console.log("tile placed");
-        }
+        //console.log("can place");
+        tempSquare = squares.find(element => element == placeablePos[i]).updateState();
+        console.log("tile placed");
         
         //occupiedCells.push({x: tempSquare.position.x, y: tempSquare.position.y});
       }
@@ -243,8 +241,10 @@ function findPlaceable(square){
 }
 
 function updatePlaceable(){
-   let filteredList = squares.filter(element => element.state == 0);
-   //squares.some(otherElement => (Math.abs(element.x-otherElement.x) == IMG_SIZE && otherElement.y == element.y && otherElement.state > 0)));
+   let filteredList = squares.filter(element => element.state == 0 && 
+    squares.some(otherElement => (Math.abs(element.position.x-otherElement.position.x) == IMG_SIZE && otherElement.position.y == element.position.y && otherElement.state > 0)) ||
+    squares.some(otherElement => (Math.abs(element.position.y-otherElement.position.y) == IMG_SIZE && otherElement.position.x == element.position.x && otherElement.state > 0)));
+   
    console.log(filteredList);
    return(filteredList);
 }
