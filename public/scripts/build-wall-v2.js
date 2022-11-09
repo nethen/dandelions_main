@@ -94,8 +94,14 @@ function setup() {
   socket = io.connect('http://localhost:3000')
   //socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('squareRequest',(x) => {
-      squares.push(new Square(128, 128, Math.pow(2,1 + square.state)));
-      occupiedCells.push({x: 128, y:128});
+    x.forEach(function(square){
+      if(square.position.x == 128 && square.position.y ==128){
+        squares.push(new Square(128, 128, Math.pow(2,1 + square.state)));
+      }else{
+        squares.push(new Square(square.position.x, square.position.y, 0));
+      } 
+    });
+    //occupiedCells.push({x: 128, y:128});
   });
   createCanvas(SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT, SQUARE_SIZE*SQUARE_COUNT*CANVAS_COUNT);
   noSmooth();
@@ -152,21 +158,15 @@ function mouseClicked() {
   if(!placeDelay){
 
     let tempSquare;
+    placeablePos = updatePlaceable();
 
     for(let i=0; i<placeablePos.length;i++){
       if(mouseX > placeablePos[i].x && mouseX < placeablePos[i].x + 32  && mouseY > placeablePos[i].y && mouseY < placeablePos[i].y + 32){
         tempSquare = new Square(placeablePos[i].x, placeablePos[i].y, Math.pow(2,1 + square.state));
-        console.log(occupiedCells.find(pos => pos == {x: tempSquare.position.x, y:tempSquare.position.y}));
-          if(occupiedCells.find(pos => pos == {x: tempSquare.position.x, y:tempSquare.position.y}) == undefined){
-            squares.push(tempSquare);
-            occupiedCells.push({x: tempSquare.position.x, y: tempSquare.position.y});
-            let tempIndex = placeablePos.indexOf({x: tempSquare.position.x, y: tempSquare.position.y});
-            placeablePos.splice(tempIndex,1);
-          }
+        squares.push(tempSquare);
+        occupiedCells.push({x: tempSquare.position.x, y: tempSquare.position.y});
       }
     }
-
-
 
     console.log(placeablePos);
     console.log(occupiedCells);
@@ -235,14 +235,10 @@ function findPlaceable(square){
 }
 
 function updatePlaceable(){
-  let removeThese = []
-  for(let i=0;i<occupiedCells.length;i++){
-    for(let j=0;j<placeablePos.length;j++){
-      if(occupiedCells[i].x == placeablePos[j].x && occupiedCells[i].y == placeablePos[j].y){
-        removeThese.push(j);
-      }
-    }
-  }
-  console.log(removeThese);
-  return(removeThese);
+  console.log(squares.some(element => element.state == 0));
+   const filteredList = squares.filter(element => element.state == 0 && 
+    squares.some(otherElement => (Math.abs(element.x-otherElement.x) == IMG_SIZE && otherElement.y == element.y && otherElement.state > 0)) 
+   || squares.some(otherElement => (otherElement.x == element.x && otherElement.state > 0 && Math.abs(element.y-otherElement.y) == IMG_SIZE)));
+   console.log(filteredList);
+   return(filteredList);
 }
