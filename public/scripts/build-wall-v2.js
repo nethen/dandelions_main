@@ -52,6 +52,9 @@ class Square {
   }
 
   updateState(){
+    if(this.state == 0){
+      this.state = 2;
+    }
     this.state *= 2;
     if (this.state > 32) this.state = 2;
   }
@@ -96,7 +99,7 @@ function setup() {
   socket.on('squareRequest',(x) => {
     x.forEach(function(square){
       if(square.position.x == 128 && square.position.y ==128){
-        squares.push(new Square(128, 128, Math.pow(2,1 + square.state)));
+        squares.push(new Square(128, 128, 4));
       }else{
         squares.push(new Square(square.position.x, square.position.y, 0));
       } 
@@ -159,17 +162,22 @@ function mouseClicked() {
 
     let tempSquare;
     placeablePos = updatePlaceable();
+    console.log(placeablePos);
 
     for(let i=0; i<placeablePos.length;i++){
-      if(mouseX > placeablePos[i].x && mouseX < placeablePos[i].x + 32  && mouseY > placeablePos[i].y && mouseY < placeablePos[i].y + 32){
-        tempSquare = new Square(placeablePos[i].x, placeablePos[i].y, Math.pow(2,1 + square.state));
-        squares.push(tempSquare);
-        occupiedCells.push({x: tempSquare.position.x, y: tempSquare.position.y});
+      if(mouseX > placeablePos[i].position.x && mouseX < placeablePos[i].position.x + 32  && mouseY > placeablePos[i].position.y && mouseY < placeablePos[i].position.y + 32){
+        //tempSquare = {x: placeablePos[i].position.x, y: placeablePos[i].position.y};
+        //squares.push(tempSquare);
+        if(squares[i].position.x == placeablePos[i].position.x && squares[i].position.y == placeablePos[i].position.y){
+          squares[i].updateState();
+          console.log("tile placed");
+        }
+        
+        //occupiedCells.push({x: tempSquare.position.x, y: tempSquare.position.y});
       }
     }
-
-    console.log(placeablePos);
-    console.log(occupiedCells);
+    
+    //console.log(occupiedCells);
 
     placeDelay = true;
   }
@@ -235,10 +243,8 @@ function findPlaceable(square){
 }
 
 function updatePlaceable(){
-  console.log(squares.some(element => element.state == 0));
-   const filteredList = squares.filter(element => element.state == 0 && 
-    squares.some(otherElement => (Math.abs(element.x-otherElement.x) == IMG_SIZE && otherElement.y == element.y && otherElement.state > 0)) 
-   || squares.some(otherElement => (otherElement.x == element.x && otherElement.state > 0 && Math.abs(element.y-otherElement.y) == IMG_SIZE)));
+   let filteredList = squares.filter(element => element.state == 0);
+   //squares.some(otherElement => (Math.abs(element.x-otherElement.x) == IMG_SIZE && otherElement.y == element.y && otherElement.state > 0)));
    console.log(filteredList);
    return(filteredList);
 }
