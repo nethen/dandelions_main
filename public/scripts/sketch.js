@@ -9,6 +9,8 @@ let id;
 let moveChosen = null;
 let moveType = Math.floor(Math.random*6) - 1;
 let globalPos;
+//let placeable = [];
+let placeable = new Set();
 
 //encapsulate data related to tiles
 class Square {
@@ -121,6 +123,8 @@ function setup() {
       squares.push(new Square(square.position.x, square.position.y, holdState));
       //squares.push(new Square(square.position.x, square.position.y, Math.pow(2,2 + square.state)));
     });
+    // placeable = updatePlaceable();
+    updatePlaceable();
     //Get second half (selected tile positions & owners)
     data[2].forEach(function(element){
       //Find corresponding tile position in client cells. If a match is found, indicate client who made move
@@ -183,7 +187,8 @@ function setup() {
       })
 
       moveType = Math.floor(Math.random*6) - 1;
-
+      updatePlaceable();
+      //placeable = updatePlaceable();
       //Find corresponding square to position in data & update state based on owner of ripple tile
       data[1].forEach(element => {
         const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
@@ -198,10 +203,14 @@ function setup() {
 //Display all tiles every 0.3s
 function draw() {
   background(255);
-  for (let i = 0; i < squares.length; i++){
-    squares[i].display();
-    squares[i].update();
-  }
+  // for (let i = 0; i < squares.length; i++){
+  //   squares[i].display();
+  //   squares[i].update();
+  // }
+  squares.forEach(element => {
+    element.display();
+    element.update();
+  })
 }
 
 //Click callback
@@ -209,24 +218,26 @@ function mouseClicked() {
   //Find tile that was clicked
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
   const clickedSquare = squares.find(active);
-  //If the tile is not selected or is owned by current client
-  if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
-    //Make a boolean variable for sending command to server
-    let bool = false
-    //If a move is not chosen, prepare boolean to let server know that it will be selected
-    if (moveChosen === null){
-      bool = true;
-      moveChosen = {x: clickedSquare.position.x, y: clickedSquare.position.y};
-    }
-    //Otherwise, deselect tile 
-    else{
-      if (clickedSquare.selected){
-        moveChosen = null;
+  if(placeable.has(clickedSquare)){
+    //If the tile is not selected or is owned by current client
+    if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
+      //Make a boolean variable for sending command to server
+      let bool = false
+      //If a move is not chosen, prepare boolean to let server know that it will be selected
+      if (moveChosen === null){
+        bool = true;
+        moveChosen = {x: clickedSquare.position.x, y: clickedSquare.position.y};
       }
+      //Otherwise, deselect tile 
+      else{
+        if (clickedSquare.selected){
+          moveChosen = null;
+        }
+      }
+      //Send data of tile being selected to server
+      //console.log(clickedSquare.state);
+      socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
     }
-    //Send data of tile being selected to server
-    console.log(clickedSquare.state);
-    socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
   }
 }
 
@@ -234,10 +245,30 @@ function mouseClicked() {
 const rippleAdjacent = (centerSquare) => {
   const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-centerSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-centerSquare.position.y) < IMG_SIZE*2) && square != centerSquare));
   
-  for (let i = 0; i < adjacentSquares.length; i++){
+  // for (let i = 0; i < adjacentSquares.length; i++){
     
-    if(adjacentSquares[i].moving === true) return;
-    adjacentSquares[i].ripple(centerSquare.state);
-    adjacentSquares[i].startMoving();
+  //   if(adjacentSquares[i].moving === true) return;
+  //   adjacentSquares[i].ripple(centerSquare.state);
+  //   adjacentSquares[i].startMoving();
+  // }
+  adjacentSquares.forEach(element => {
+    if(element.moving === true) return;
+    element.ripple(centerSquare.state);
+    element.startMoving();
+  })
+}
+
+function updatePlaceable(){
+	// let filteredList = squares.filter(element => element.state == -1 && 
+	//  squares.some(otherElement => (Math.abs(element.position.x-otherElement.position.x) == IMG_SIZE && otherElement.position.y == element.position.y && otherElement.state > -1)) ||
+	//  squares.some(otherElement => (Math.abs(element.position.y-otherElement.position.y) == IMG_SIZE && otherElement.position.x == element.position.x && otherElement.state > -1)));
+	// //console.log(filteredList);
+  placeable.clear();
+  for (let i = 0; i < squares.length; i++){
+    if(squares[i].state == -1 && squares.some(otherElement => (Math.abs(squares[i].position.x-otherElement.position.x) == IMG_SIZE && otherElement.position.y == squares[i].position.y && otherElement.state > -1)) ||
+    squares.some(otherElement => (Math.abs(squares[i].position.y-otherElement.position.y) == IMG_SIZE && otherElement.position.x == squares[i].position.x && otherElement.state > -1))){
+      placeable.add(squares[i]);
+    }
   }
+	//return(filteredList);
 }

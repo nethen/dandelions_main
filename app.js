@@ -31,17 +31,16 @@ server.on('listening', () => {
  console.log('Listening on port '+PORT)
 })
 
-function updatePlaceable(){
-	let filteredList = loadSquares.filter(element => element.state == -1 && 
-	 loadSquares.some(otherElement => (Math.abs(element.position.x-otherElement.position.x) == SIZE && otherElement.position.y == element.position.y && otherElement.state > -1)) ||
-	 loadSquares.some(otherElement => (Math.abs(element.position.y-otherElement.position.y) == SIZE && otherElement.position.x == element.position.x && otherElement.state > -1)));
-	
-	console.log(filteredList);
-	return(filteredList);
-  }
+// function updatePlaceable(){
+// 	let filteredList = loadSquares.filter(element => element.state == -1 && 
+// 	 loadSquares.some(otherElement => (Math.abs(element.position.x-otherElement.position.x) == SIZE && otherElement.position.y == element.position.y && otherElement.state > -1)) ||
+// 	 loadSquares.some(otherElement => (Math.abs(element.position.y-otherElement.position.y) == SIZE && otherElement.position.x == element.position.x && otherElement.state > -1)));
+// 	//console.log(filteredList);
+// 	return(filteredList);
+//   }
 
 const calcripple = (comparedState, updateState) => {
-	if (updateState.state == -1) return;
+	if (updateState.state == -1 || comparedState.state.state == -1) return;
     if (updateState.state < Math.log2(comparedState.state.state)-2) updateState.state ++;
     else if (updateState.state > Math.log2(comparedState.state.state)-2) updateState.state --;
   }
@@ -49,7 +48,7 @@ const calcripple = (comparedState, updateState) => {
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	if (i == j && i == 0) loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, Math.floor(Math.random() * 5)));
+    	if (i == j) loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, Math.floor(Math.random() * 5)));
 		else loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, -1));
     }
   }
@@ -59,7 +58,7 @@ for (let i = 0; i < SQUARES; i++){
 const io = require('socket.io')(server)
 
 let serverRefresh = setInterval(function(){
-	console.log(updatePlaceable());
+	//const x = (updatePlaceable());
 	//remove duplicates in temp inside of ripple buffer
 	tempSquares.forEach((element) => {
 		const foundDupe = rippleSquares.find(compareElement => compareElement.position.x == element.position.x && compareElement.position.y == element.position.y);
@@ -103,7 +102,7 @@ setInterval(function() {
 
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
-	console.log(updatePlaceable());
+	//console.log(updatePlaceable());
 	socket.emit('pageLoad', [{x: Math.floor(Math.random()*5), y: Math.floor(Math.random()*5)},loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
