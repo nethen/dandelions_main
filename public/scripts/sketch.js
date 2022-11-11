@@ -3,11 +3,12 @@ p5.disableFriendlyErrors = true; // disables FES
 //instantiate constants and global vars
 const IMG_SIZE = 64;
 const CANVAS_COUNT = 100;
-const TIMER_DURATION = 10;
+const TIMER_DURATION = 16;
 let socket;
 let id;
 let moveChosen = null;
-let moveType = Math.floor(Math.random*6) - 1;
+let moveType = Math.floor(Math.random()*6) - 1;
+console.log(moveType)
 let globalPos;
 //let placeable = [];
 let placeable = new Set();
@@ -80,13 +81,14 @@ class Square {
 
   //animate tile when states change
   update(){
+    if (this.counter >= TIMER_DURATION){
+      this.moving = false;
+      this.pState = this.state;
+      this.srcWidth = Math.floor(this.srcWidth);
+    }
     if (this.moving && this.counter < TIMER_DURATION){
       this.counter ++;
       this.srcWidth += ((this.state - this.pState)/TIMER_DURATION);
-      if (this.counter >= TIMER_DURATION){
-        this.moving = false;
-        this.pState = this.state;
-      }
     }
   }
 }
@@ -117,7 +119,7 @@ function setup() {
       //Add linearly into array for iteration (2 + x = starting position (2 = power 2 for start @ 4))
       let holdState = -1;
       if (square.state > -1) {
-        holdState = Math.pow(2,2 + square.state);
+        holdState = Math.pow(2,1 + square.state);
         //console.log(holdState);
       }
       squares.push(new Square(square.position.x, square.position.y, holdState));
@@ -185,16 +187,26 @@ function setup() {
       squares.forEach(element => {
         element.selected ="";
       })
+      data[0].forEach(element => {
+        //console.log(element);
+        const x = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y)
+        if (element.state > -1) x.srcWidth = element.state;
+        x.state = element.state;
+      })
 
-      moveType = Math.floor(Math.random*6) - 1;
+      moveType = Math.floor(Math.random()*6) - 1;
+      //moveType = 5;
       updatePlaceable();
       //placeable = updatePlaceable();
       //Find corresponding square to position in data & update state based on owner of ripple tile
       data[1].forEach(element => {
         const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
         //Start animation
+        console.log(element.state.state);
+        if (element.state.state > 0){
         correspondingSquare.ripple(element.state.state);
         correspondingSquare.startMoving();
+        }
       })
     }
   });
@@ -203,14 +215,14 @@ function setup() {
 //Display all tiles every 0.3s
 function draw() {
   background(255);
-  // for (let i = 0; i < squares.length; i++){
-  //   squares[i].display();
-  //   squares[i].update();
-  // }
-  squares.forEach(element => {
-    element.display();
-    element.update();
-  })
+  for (let i = 0; i < squares.length; i++){
+    squares[i].display();
+    squares[i].update();
+  }
+  // squares.forEach(element => {
+  //   element.display();
+  //   element.update();
+  // })
 }
 
 //Click callback
@@ -218,6 +230,13 @@ function mouseClicked() {
   //Find tile that was clicked
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
   const clickedSquare = squares.find(active);
+  if (keyIsDown(SHIFT)) {
+    console.log("SRCWIDTH");
+    console.log(clickedSquare.srcWidth);
+    console.log("STATE");
+    console.log(clickedSquare.state);
+    socket.emit('squareCheck',{position: clickedSquare.position});
+  }
   if(placeable.has(clickedSquare)){
     //If the tile is not selected or is owned by current client
     if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
@@ -236,7 +255,11 @@ function mouseClicked() {
       }
       //Send data of tile being selected to server
       //console.log(clickedSquare.state);
-      socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
+      //socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
+      let tempMoveType = moveType;
+      if (moveType > -1) tempMoveType = Math.pow(2,1 + tempMoveType);
+      //alert(tempMoveType);
+      socket.emit('squareUpdate',{position: clickedSquare.position, state: tempMoveType, selected: bool});
     }
   }
 }
@@ -265,8 +288,8 @@ function updatePlaceable(){
 	// //console.log(filteredList);
   placeable.clear();
   for (let i = 0; i < squares.length; i++){
-    if(squares[i].state == -1 && squares.some(otherElement => (Math.abs(squares[i].position.x-otherElement.position.x) == IMG_SIZE && otherElement.position.y == squares[i].position.y && otherElement.state > -1)) ||
-    squares.some(otherElement => (Math.abs(squares[i].position.y-otherElement.position.y) == IMG_SIZE && otherElement.position.x == squares[i].position.x && otherElement.state > -1))){
+    if(squares[i].state == -1 && (squares.some(otherElement => (Math.abs(squares[i].position.x-otherElement.position.x) == IMG_SIZE && otherElement.position.y == squares[i].position.y && otherElement.state > -1)) ||
+    squares.some(otherElement => (Math.abs(squares[i].position.y-otherElement.position.y) == IMG_SIZE && otherElement.position.x == squares[i].position.x && otherElement.state > -1)))){
       placeable.add(squares[i]);
     }
   }

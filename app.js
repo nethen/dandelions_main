@@ -41,8 +41,8 @@ server.on('listening', () => {
 
 const calcripple = (comparedState, updateState) => {
 	if (updateState.state == -1 || comparedState.state.state == -1) return;
-    if (updateState.state < Math.log2(comparedState.state.state)-2) updateState.state ++;
-    else if (updateState.state > Math.log2(comparedState.state.state)-2) updateState.state --;
+    if (updateState.state < Math.log2(comparedState.state.state)-1) updateState.state ++;
+    else if (updateState.state > Math.log2(comparedState.state.state)-1) updateState.state --;
   }
 
 //Create tiles based on constant X & Y
@@ -75,13 +75,12 @@ let serverRefresh = setInterval(function(){
 	
 	// io.emit('serverRefresh', tempSquares); 
 
-	// tempSquares.forEach((element) => {
-	// 	const pos = element.position;
-	// 	const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
-	// 	// console.log( Math.log2(element.state) - 1);
-	// 	// console.log(a);
-	// 	//a.state = Math.log2(element.state) - 1;
-	// });
+	tempSquares.forEach((element) => {
+		const pos = element.position;
+		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
+		// console.log( Math.log2(element.state) - 1);
+		a.state = Math.log2(element.state) - 1;
+	});
 
 	loadSquares.forEach((element) => {
 		const a = rippleSquares.find(newElement => newElement.position.x == element.position.x &&  newElement.position.y == element.position.y)	
@@ -109,6 +108,10 @@ io.sockets.on('connection', (socket) => {
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
 	
 	//ON USER ACTION
+	socket.on('squareCheck',(data) =>{
+		console.log(loadSquares.find(element => data.position.x == element.position.x && data.position.y == element.position.y))
+	})
+
 	socket.on('squareUpdate',(data) => {
 		//console.log(data);
 		//CHECK IF USER IS SELECTING TILE
@@ -127,6 +130,8 @@ io.sockets.on('connection', (socket) => {
 						if (tempX != data.position.x || tempY != data.position.y) {
 							//const a = rippleSquares.find(element => Object.is(element.position.x, tempX) && Object.is(element.position.y, tempY));
 							const a = rippleSquares.find(element => element.position.x == tempX && element.position.y == tempY);
+							
+							//console.log(data.state);
 							//console.log(a);
 							if (a) a.state.push({owner: data.position, state: data.state});
 							else rippleSquares.push(new SquareHolder(tempX, tempY, [{owner: data.position, state: data.state}]));
