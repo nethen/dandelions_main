@@ -85,6 +85,7 @@ class Square {
       this.moving = false;
       this.pState = this.state;
       this.srcWidth = Math.floor(this.srcWidth);
+      if (this.srcWidth != this.state) this.srcWidth = this.state;
     }
     if (this.moving && this.counter < TIMER_DURATION){
       this.counter ++;
@@ -237,7 +238,7 @@ function mouseClicked() {
     console.log(clickedSquare.state);
     socket.emit('squareCheck',{position: clickedSquare.position});
   }
-  if(placeable.has(clickedSquare)){
+  if((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1)){
     //If the tile is not selected or is owned by current client
     if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
       //Make a boolean variable for sending command to server

@@ -78,8 +78,9 @@ let serverRefresh = setInterval(function(){
 	tempSquares.forEach((element) => {
 		const pos = element.position;
 		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
-		// console.log( Math.log2(element.state) - 1);
-		a.state = Math.log2(element.state) - 1;
+		//console.log(element.state);
+		if (element.state == -1)  a.state = -1;
+		else a.state = Math.log2(element.state) - 1;
 	});
 
 	loadSquares.forEach((element) => {
