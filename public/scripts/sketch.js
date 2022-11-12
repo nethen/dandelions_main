@@ -7,7 +7,8 @@ const TIMER_DURATION = 8;
 let socket;
 let id;
 let moveChosen = null;
-let moveType = Math.floor(Math.random()*6) - 1;
+//let moveType = Math.floor(Math.random()*6) - 1;
+let moveType = Math.floor(Math.random()*5)
 console.log(moveType)
 let globalPos;
 //let placeable = [];
