@@ -41,15 +41,15 @@ server.on('listening', () => {
 
 const calcripple = (comparedState, updateState) => {
 	if (updateState.state == -1 || comparedState.state.state == -1) return;
-    if (updateState.state < Math.log2(comparedState.state.state)-1) updateState.state ++;
-    else if (updateState.state > Math.log2(comparedState.state.state)-1) updateState.state --;
+    if (updateState.state < Math.log2(comparedState.state.state)-2) updateState.state ++;
+    else if (updateState.state > Math.log2(comparedState.state.state)-2) updateState.state --;
   }
 
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
     	if (((i-4)%9 == 0) && ((j-4)%9 == 0)) loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, Math.floor(Math.random() * 5)));
-		loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, -1));
+		else loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, -1));
     }
   }
 
@@ -80,7 +80,7 @@ let serverRefresh = setInterval(function(){
 		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
 		//console.log(element.state);
 		if (element.state == -1)  a.state = -1;
-		else a.state = Math.log2(element.state) - 1;
+		else a.state = Math.log2(element.state) - 2;
 	});
 
 	loadSquares.forEach((element) => {
@@ -103,7 +103,7 @@ setInterval(function() {
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 	//console.log(updatePlaceable());
-	socket.emit('pageLoad', [{x: Math.floor(Math.random()*5), y: Math.floor(Math.random()*5)},loadSquares,placeholders]);
+	socket.emit('pageLoad', [{x: Math.floor(Math.random()*11), y: Math.floor(Math.random()*11)},loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
