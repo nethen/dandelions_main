@@ -8,7 +8,7 @@ let socket;
 let id;
 let moveChosen = null;
 //let moveType = Math.floor(Math.random()*6) - 1;
-let moveType = Math.floor(Math.random()*5)
+let moveType;
 console.log(moveType)
 let globalPos;
 //let placeable = [];
@@ -110,11 +110,11 @@ function setup() {
   //socket = io.connect('http://localhost:3000')
   socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('timer', function(data) {
-    document.querySelector('#counter').innerText = "Time left: "+data.countdown;
+    document.getElementById('counter').textContent = data.countdown;
   });
   //Check for incoming tile data on first load
   socket.on('pageLoad',(data) => {
-    document.querySelector('#move').innerText = "Move: "+moveType;
+    updateMoveText();
     squares = [];
     globalPos = {x: data[0].x * IMG_SIZE * 9, y: data[0].y * IMG_SIZE * 9}
     console.log(globalPos)
@@ -144,7 +144,8 @@ function setup() {
   });
 
   //Set up drawing conditions
-  createCanvas(IMG_SIZE*CANVAS_COUNT, IMG_SIZE*CANVAS_COUNT);
+  const p5 = createCanvas(IMG_SIZE*CANVAS_COUNT, IMG_SIZE*CANVAS_COUNT);
+  p5.parent("canvas")
   noSmooth();
   frameRate(30);
 
@@ -199,8 +200,7 @@ function setup() {
         x.state = element.state;
       })
 
-      moveType = Math.floor(Math.random()*5);
-      document.querySelector('#move').innerText = "Move: "+moveType;
+      updateMoveText();
       //moveType = 5;
       updatePlaceable();
       //placeable = updatePlaceable();
@@ -301,4 +301,21 @@ function updatePlaceable(){
     }
   }
 	//return(filteredList);
+}
+
+const updateMoveText = () => {
+  moveType = Math.floor(Math.random()*5);
+  const move = document.querySelector('#move')
+  const indicator = document.querySelector('#indicator')
+    if(moveType > -1) {
+      move.innerText = "Build";
+      const path = "assets/stages/stage"+(moveType + 1)+".png";
+      indicator.src = path
+      if(indicator.classList.contains("bottomBar__indicator--inactive")) indicator.classList.remove("bottomBar__indicator--inactive");
+    }
+    else {
+      move.innerText = "Erase";
+      if(indicator.classList.contains("bottomBar__indicator--inactive") == false) indicator.classList.add("bottomBar__indicator--inactive");
+    }
+  
 }

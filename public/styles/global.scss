@@ -1,0 +1,18 @@
+@import url("partials/_fontStyles.scss");
+
+html, body {
+    margin: 0;
+    padding: 0;
+  }
+  canvas {
+    display: block;
+  }
+  
+
+body{
+    font: 1rem "Apfel Grotesk", sans-serif;
+}
+
+h1{
+    font: italic 8rem "Happy Times", serif;
+}
