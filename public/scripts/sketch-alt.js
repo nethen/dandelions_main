@@ -38,8 +38,6 @@ class Square {
   //changed display method to image-based rendering (avoid load on p5js)
   display(){
     if (this.state > 0){
-    //if selected, make tile gray
-    if (this.selected.length > 0){
       //if selected, make tile gray
       if (this.selected.length > 0){
         image(imgAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
