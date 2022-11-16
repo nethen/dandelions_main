@@ -192,8 +192,10 @@ function setup() {
       data[0].forEach(element => {
         //console.log(element);
         const x = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y)
-        if (element.state > -1) x.srcWidth = element.state;
-        x.state = element.state;
+        if (x){
+          if (element.state > -1) x.srcWidth = element.state;
+          x.state = element.state;
+        }
       })
 
       moveType = Math.floor(Math.random()*5);
