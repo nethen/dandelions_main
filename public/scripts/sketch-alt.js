@@ -40,18 +40,26 @@ class Square {
     if (this.state > 0){
     //if selected, make tile gray
     if (this.selected.length > 0){
-      image(imgAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
-      //check if current client selected tile
-      if (this.selected == socket.id){
-        image(client,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
-      } 
-      //otherwise, indicate alternate socket selected tile
-      else{
-        image(clientAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+      //if selected, make tile gray
+      if (this.selected.length > 0){
+        image(imgAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+        //check if current client selected tile
+        if (this.selected == socket.id){
+          image(client,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+        } 
+        //otherwise, indicate alternate socket selected tile
+        else{
+          image(clientAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+        }
       }
-    }
-    //otherwise, default to black tile
-    else image(img,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+      //otherwise, default to black tile
+      else image(img,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+    } 
+    
+    else{
+      if (this.placeable == true){
+        image(placeableTile,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+      }
     }
 
     if (this.selected.length > 0){
@@ -103,6 +111,7 @@ function preload() {
  imgAlt = loadImage("assets/checker_alt.png");
  client=loadImage("assets/client.png");
  clientAlt=loadImage("assets/client_alt.png");
+ placeableTile=loadImage("assets/placeable.png");
 }
 
 function setup() {
@@ -222,7 +231,7 @@ function setup() {
 
 //Display all tiles every 0.3s
 function draw() {
-  background(250);
+  background(255);
   for (let i = 0; i < squares.length; i++){
     squares[i].display();
     squares[i].update();
@@ -244,6 +253,7 @@ function mouseClicked() {
     console.log(clickedSquare.srcWidth);
     console.log("STATE");
     console.log(clickedSquare.state);
+    console.log(clickedSquare.placeable)
     //socket.emit('squareCheck',{position: clickedSquare.position});
   }
   if((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1)){
@@ -297,9 +307,11 @@ function updatePlaceable(){
 	// //console.log(filteredList);
   placeable.clear();
   for (let i = 0; i < squares.length; i++){
+    squares[i].placeable = false;
     if(squares[i].state == -1 && (squares.some(otherElement => (Math.abs(squares[i].position.x-otherElement.position.x) == IMG_SIZE && otherElement.position.y == squares[i].position.y && otherElement.state > -1)) ||
     squares.some(otherElement => (Math.abs(squares[i].position.y-otherElement.position.y) == IMG_SIZE && otherElement.position.x == squares[i].position.x && otherElement.state > -1)))){
       placeable.add(squares[i]);
+      squares[i].placeable = true;
     }
   }
 	//return(filteredList);
