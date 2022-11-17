@@ -117,6 +117,13 @@ io.sockets.on('connection', (socket) => {
 		//console.log(data);
 		//CHECK IF USER IS SELECTING TILE
 		if (data.selected === true) {
+			const placeDupe = placeholders.find(element => element.id == socket.id);
+			if (placeDupe){
+				const tempDupe = tempSquares.find(element => element.position.x == placeDupe.x && element.position.y == placeDupe.y);
+				tempSquares.splice(tempSquares.indexOf(tempDupe), 1);
+				placeholders.splice(placeholders.indexOf(placeDupe), 1);
+				io.emit('placeholderUpdate',{x: placeDupe.x, y: placeDupe.y, id: socket.id, onCanvas: false});
+			}
 			tempSquares.push(new SquareHolder(data.position.x, data.position.y, data.state));
 			placeholders.push({x: data.position.x, y: data.position.y, id: socket.id, onCanvas: true});
 			io.emit('placeholderUpdate',{x: data.position.x, y: data.position.y, id: socket.id, onCanvas: true});

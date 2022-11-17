@@ -260,16 +260,17 @@ function mouseClicked() {
       //Make a boolean variable for sending command to server
       let bool = false
       //If a move is not chosen, prepare boolean to let server know that it will be selected
-      if (moveChosen === null){
-        bool = true;
-        moveChosen = {x: clickedSquare.position.x, y: clickedSquare.position.y};
-      }
+      // if (moveChosen === null){
+      //   bool = true;
+      //  moveChosen = {x: clickedSquare.position.x, y: clickedSquare.position.y};
+      //}
       //Otherwise, deselect tile 
-      else{
-        if (clickedSquare.selected){
-          moveChosen = null;
-        }
-      }
+      // else{
+        // if (clickedSquare.selected){
+        //   moveChosen = null;
+        // }
+      // }
+      if (clickedSquare.selected == "") bool = true;
       //Send data of tile being selected to server
       //console.log(clickedSquare.state);
       //socket.emit('squareUpdate',{position: clickedSquare.position, state: clickedSquare.state, selected: bool});
