@@ -240,6 +240,11 @@ function draw() {
   // })
 }
 
+function mouseMoved() {
+  if ([...placeable].some(element => element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX && element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY)) cursor(HAND);
+  else cursor(ARROW)
+}
+
 //Click callback
 function mouseClicked() {
   //Find tile that was clicked
