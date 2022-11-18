@@ -2,7 +2,7 @@ p5.disableFriendlyErrors = true; // disables FES
 
 //instantiate constants and global vars
 const IMG_SIZE = 48;
-const CANVAS_COUNT = 10;
+const CANVAS_COUNT = 3;
 const TIMER_DURATION = 8;
 let socket;
 let id;
@@ -114,7 +114,7 @@ function setup() {
   //Connect to server (localhost for debug)
   //socket = io.connect('http://localhost:3000')
   //socket = io.connect('192.168.0.83:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  socket = io.connect('dandelions-demo.herokuapp.com')
   socket.on('timer', function(data) {
     document.getElementById('counter').textContent = data.countdown;
   });

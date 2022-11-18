@@ -13,7 +13,7 @@ let rippleSquares =[];
 let placeholders = [];
 
 //Size of canvas
-const SQUARES = 100;
+const SQUARES = 28;
 
 //Set up connection
 const http = require('http')
