@@ -9,7 +9,6 @@ let id;
 let moveChosen = null;
 //let moveType = Math.floor(Math.random()*6) - 1;
 let moveType;
-console.log(moveType)
 let globalPos;
 //let placeable = [];
 let placeable = new Set();
@@ -326,7 +325,9 @@ function updatePlaceable(){
 }
 
 const updateMoveText = () => {
-  moveType = Math.floor(Math.random()*5);
+  const currTiles = squares.filter(element => element.state > -1).length;
+  if (currTiles > 1) moveType = (Math.floor(Math.random()*6)-1);
+  else moveType = Math.floor(Math.random()*5);
   const move = document.querySelector('#move')
   const indicator = document.querySelector('#indicator')
     if(moveType > -1) {
