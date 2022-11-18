@@ -7,8 +7,6 @@ const TIMER_DURATION = 8;
 let socket;
 let id;
 let moveChosen = null;
-let tapControl = false;
-let tapControlTimer = 0;
 //let moveType = Math.floor(Math.random()*6) - 1;
 let moveType;
 console.log(moveType)
@@ -117,8 +115,8 @@ function preload() {
 function setup() {
   //Connect to server (localhost for debug)
   //socket = io.connect('http://localhost:3000')
-  //socket = io.connect('192.168.0.83:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  socket = io.connect('192.168.0.83:3000')
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('timer', function(data) {
     document.getElementById('counter').textContent = data.countdown;
   });
@@ -241,7 +239,6 @@ function draw() {
   //   element.display();
   //   element.update();
   // })
-  if(tapControlTimer > 0) tapControlTimer--;
 }
 
 function mouseMoved() {
@@ -250,7 +247,8 @@ function mouseMoved() {
 }
 
 //Click callback
-function mouseClicked() {
+function mousePressed(event) {
+  console.log(event)
   console.log("MOUSEDEBUG")
   console.log(mouseX);
   console.log(mouseY);
@@ -294,25 +292,26 @@ function mouseClicked() {
   }
 }
 
-function touchStarted(event) {
-  //Find tile that was clicked
-  const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
-  const clickedSquare = squares.find(active);
-  if(tapControlTimer == 0 && ((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1))){
-    tapControlTimer = 8;
-    //If the tile is not selected or is owned by current client
-    if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
-      //Make a boolean variable for sending command to server
-      let bool = false
-      if (clickedSquare.selected == "") bool = true;
-      //Send data of tile being selected to server
-      let tempMoveType = moveType;
-      if (moveType > -1) tempMoveType = Math.pow(2,2 + tempMoveType);
-      //alert(tempMoveType);
-      socket.emit('squareUpdate',{position: {x: globalPos.x+ clickedSquare.position.x, y: globalPos.y+ clickedSquare.position.y}, state: tempMoveType, selected: bool});
-    }
-  }
-}
+
+// function touchStarted(event) {
+//   //Find tile that was clicked
+//   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
+//   const clickedSquare = squares.find(active);
+//   if(((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1))){
+
+//     //If the tile is not selected or is owned by current client
+//     if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
+//       //Make a boolean variable for sending command to server
+//       let bool = false
+//       if (clickedSquare.selected == "") bool = true;
+//       //Send data of tile being selected to server
+//       let tempMoveType = moveType;
+//       if (moveType > -1) tempMoveType = Math.pow(2,2 + tempMoveType);
+//       //alert(tempMoveType);
+//       socket.emit('squareUpdate',{position: {x: globalPos.x+ clickedSquare.position.x, y: globalPos.y+ clickedSquare.position.y}, state: tempMoveType, selected: bool});
+//     }
+//   }
+// }
 
 //Ripple command based on central square (defunct)
 const rippleAdjacent = (centerSquare) => {
