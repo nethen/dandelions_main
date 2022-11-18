@@ -14,7 +14,7 @@ let placeholders = [];
 
 //Size of canvas
 const SQUARES = 100;
-const SIZE = 64;
+const SIZE = 48;
 
 //Set up connection
 const http = require('http')

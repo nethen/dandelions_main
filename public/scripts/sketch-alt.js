@@ -1,7 +1,7 @@
 p5.disableFriendlyErrors = true; // disables FES
 
 //instantiate constants and global vars
-const IMG_SIZE = 64;
+const IMG_SIZE = 48;
 const CANVAS_COUNT = 10;
 const TIMER_DURATION = 8;
 let socket;
@@ -146,7 +146,7 @@ function setup() {
     });
     //squares = squares.filter(element => {element.position.x < globalPos.x + 320 && element.position.x >= globalPos.x && element.position.y < globalPos.y + 320 && element.position.y >= globalPos.y});
     squares = squares.filter(element => element.position.x < globalPos.x + IMG_SIZE*10 && element.position.x >= globalPos.x && element.position.y < globalPos.y + IMG_SIZE*10 && element.position.y >= globalPos.y);
-    squares.forEach(element => {element.position = {x: Math.floor(squares.indexOf(element)/10) * 64, y: (squares.indexOf(element) % 10) * 64 }});
+    squares.forEach(element => {element.position = {x: Math.floor(squares.indexOf(element)/10) * IMG_SIZE, y: (squares.indexOf(element) % 10) * IMG_SIZE }});
     console.log(squares);
     updatePlaceable();
   });
