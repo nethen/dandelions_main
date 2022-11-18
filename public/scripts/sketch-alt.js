@@ -54,7 +54,7 @@ class Square {
     } 
     
     else{
-      if (this.placeable == true){
+      if (this.placeable == true && moveType > -1){
         image(placeableTile,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
       }
     }
@@ -240,7 +240,8 @@ function draw() {
 }
 
 function mouseMoved() {
-  if ([...placeable].some(element => (element.position.x * IMG_SIZE) < mouseX && (element.position.x + 1) * IMG_SIZE > mouseX && (element.position.y* IMG_SIZE) < mouseY && (element.position.y + 1)* IMG_SIZE > mouseY)) cursor(HAND);
+  if (moveType > -1 && [...placeable].some(element => (element.position.x * IMG_SIZE) < mouseX && (element.position.x + 1) * IMG_SIZE > mouseX && (element.position.y* IMG_SIZE) < mouseY && (element.position.y + 1)* IMG_SIZE > mouseY)) cursor(HAND);
+  else if (moveType == -1 && squares.some(element => element.state > -1 && (element.position.x * IMG_SIZE) < mouseX && (element.position.x + 1) * IMG_SIZE > mouseX && (element.position.y* IMG_SIZE) < mouseY && (element.position.y + 1)* IMG_SIZE > mouseY)) cursor(HAND);
   else cursor(ARROW)
 }
 
