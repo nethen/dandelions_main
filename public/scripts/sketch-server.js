@@ -40,23 +40,23 @@ class Square {
     if (this.state > 0){
     //if selected, make tile gray
     if (this.selected.length > 0){
-      image(imgAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+      image(imgAlt,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
       //check if current client selected tile
       if (this.selected == socket.id){
-        image(client,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+        image(client,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
       } 
       //otherwise, indicate alternate socket selected tile
       else{
-        image(clientAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+        image(clientAlt,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
       }
     }
     //otherwise, default to black tile
-    else image(img,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+    else image(img,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
     }
 
     else{
       if (this.placeable == true){
-        image(placeableTile,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+        image(placeableTile,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
       }
     }
 
@@ -64,11 +64,11 @@ class Square {
       //image(imgAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
       //check if current client selected tile
       if (this.selected == socket.id){
-        image(client,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+        image(client,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
       } 
       //otherwise, indicate alternate socket selected tile
       else{
-        image(clientAlt,this.position.x,this.position.y,IMG_SIZE,IMG_SIZE);
+        image(clientAlt,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
       }
     }
   }
@@ -114,16 +114,13 @@ function preload() {
 
 function setup() {
   //Connect to server (localhost for debug)
-  //socket = io.connect('http://localhost:3000')
+  socket = io.connect('http://localhost:3000')
   //socket = io.connect('192.168.0.83:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
-  socket.on('timer', function(data) {
-    document.querySelector('#counter').innerText = "Time left: "+data.countdown;
-  });
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
   //Check for incoming tile data on first load
   socket.on('pageLoad',(data) => {
     squares = [];
-    globalPos = {x: data[0].x * IMG_SIZE, y: data[0].y * IMG_SIZE}
+    globalPos = {x: data[0].x, y: data[0].y}
     //Get first half of the packet (tile positions + states)
     data[1].forEach(function(square){
       //Add linearly into array for iteration (2 + x = starting position (2 = power 2 for start @ 4))
@@ -216,7 +213,7 @@ function draw() {
 
 //Ripple command based on central square (defunct)
 const rippleAdjacent = (centerSquare) => {
-  const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-centerSquare.position.x) < IMG_SIZE*2 ) && (Math.abs(square.position.y-centerSquare.position.y) < IMG_SIZE*2) && square != centerSquare));
+  const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-centerSquare.position.x) < 2 ) && (Math.abs(square.position.y-centerSquare.position.y) < 2) && square != centerSquare));
   
   // for (let i = 0; i < adjacentSquares.length; i++){
     
