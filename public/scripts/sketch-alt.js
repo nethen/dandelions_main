@@ -7,6 +7,7 @@ const TIMER_DURATION = 8;
 let socket;
 let id;
 let moveChosen = null;
+let tapControl = false;
 //let moveType = Math.floor(Math.random()*6) - 1;
 let moveType;
 console.log(moveType)
@@ -295,7 +296,8 @@ function touchStarted() {
   //Find tile that was clicked
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
   const clickedSquare = squares.find(active);
-  if((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1)){
+  if(tapControl == false && ((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1))){
+    tapControl = true;
     //If the tile is not selected or is owned by current client
     if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
       //Make a boolean variable for sending command to server
@@ -308,6 +310,10 @@ function touchStarted() {
       socket.emit('squareUpdate',{position: {x: globalPos.x+ clickedSquare.position.x, y: globalPos.y+ clickedSquare.position.y}, state: tempMoveType, selected: bool});
     }
   }
+}
+
+function touchEnded(){
+  tapControl = false;
 }
 
 //Ripple command based on central square (defunct)
