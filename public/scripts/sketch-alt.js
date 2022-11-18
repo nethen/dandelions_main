@@ -292,7 +292,7 @@ function mouseClicked() {
   }
 }
 
-function touchStarted() {
+function touchStarted(event) {
   //Find tile that was clicked
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
   const clickedSquare = squares.find(active);
