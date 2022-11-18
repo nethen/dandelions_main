@@ -8,6 +8,7 @@ let socket;
 let id;
 let moveChosen = null;
 let tapControl = false;
+let tapControlTimer = 0;
 //let moveType = Math.floor(Math.random()*6) - 1;
 let moveType;
 console.log(moveType)
@@ -240,6 +241,7 @@ function draw() {
   //   element.display();
   //   element.update();
   // })
+  if(tapControlTimer > 0) tapControlTimer--;
 }
 
 function mouseMoved() {
@@ -296,8 +298,8 @@ function touchStarted(event) {
   //Find tile that was clicked
   const active = (element) => (element.position.x < mouseX && element.position.x + IMG_SIZE > mouseX) && (element.position.y < mouseY && element.position.y + IMG_SIZE > mouseY);
   const clickedSquare = squares.find(active);
-  if(tapControl == false && ((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1))){
-    tapControl = true;
+  if(tapControlTimer == 0 && ((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1))){
+    tapControlTimer = 8;
     //If the tile is not selected or is owned by current client
     if (clickedSquare && (clickedSquare.selected == "" || clickedSquare.selected == socket.id)){
       //Make a boolean variable for sending command to server
@@ -310,10 +312,6 @@ function touchStarted(event) {
       socket.emit('squareUpdate',{position: {x: globalPos.x+ clickedSquare.position.x, y: globalPos.y+ clickedSquare.position.y}, state: tempMoveType, selected: bool});
     }
   }
-}
-
-function touchEnded(){
-  tapControl = false;
 }
 
 //Ripple command based on central square (defunct)
