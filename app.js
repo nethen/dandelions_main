@@ -14,7 +14,6 @@ let placeholders = [];
 
 //Size of canvas
 const SQUARES = 100;
-const SIZE = 48;
 
 //Set up connection
 const http = require('http')
@@ -103,7 +102,7 @@ setInterval(function() {
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 	//console.log(updatePlaceable());
-	socket.emit('pageLoad', [{x: Math.floor(Math.random()*11), y: Math.floor(Math.random()*11)},loadSquares,placeholders]);
+	socket.emit('pageLoad', [{x: Math.floor(Math.random()*((SQUARES/10)+1)), y: Math.floor(Math.random()*((SQUARES/10)+1))},loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
