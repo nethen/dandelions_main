@@ -114,9 +114,9 @@ function preload() {
 
 function setup() {
   //Connect to server (localhost for debug)
-  //socket = io.connect('http://localhost:3000')
+  socket = io.connect('http://localhost:3000')
   //socket = io.connect('192.168.0.83:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
   //Check for incoming tile data on first load
   socket.on('pageLoad',(data) => {
     squares = [];

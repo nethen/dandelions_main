@@ -112,9 +112,9 @@ function preload() {
 
 function setup() {
   //Connect to server (localhost for debug)
-  //socket = io.connect('http://localhost:3000')
+  socket = io.connect('http://localhost:3000')
   //socket = io.connect('192.168.0.83:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
   socket.on('timer', function(data) {
     document.getElementById('counter').textContent = data.countdown;
   });
@@ -151,7 +151,8 @@ function setup() {
 
   //Set up drawing conditions
   const p5 = createCanvas(IMG_SIZE*CANVAS_COUNT, IMG_SIZE*CANVAS_COUNT);
-  p5.parent("canvas")
+  p5.parent("canvas_container")
+  p5.addClass("canvas_container__content");
   noSmooth();
   frameRate(30);
 
@@ -289,6 +290,18 @@ function mousePressed(event) {
       socket.emit('squareUpdate',{position: {x: globalPos.x+ clickedSquare.position.x, y: globalPos.y+ clickedSquare.position.y}, state: tempMoveType, selected: bool});
     }
   }
+}
+
+function windowResized() {
+  if (windowWidth >= 320 && windowWidth < 512){
+    resizeCanvas(windowWidth-32, windowWidth-32);
+  }
+  else if (windowWidth >= 512){
+    resizeCanvas(480, 480);
+  }
+  console.log(windowWidth);
+  console.log(windowHeight);
+  //resizeCanvas(windowWidth, windowHeight);
 }
 
 //Ripple command based on central square (defunct)
