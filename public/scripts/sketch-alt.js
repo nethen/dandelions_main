@@ -26,7 +26,7 @@ class Square {
 
     //counter variable for animation
     this.counter = TIMER_DURATION;
-    if (state == -1) this.srcWidth = IMG_SIZE;
+    if (state == -1) this.srcWidth = (width/10);
     else this.srcWidth = state;
     this.moving = false;
 
@@ -39,34 +39,34 @@ class Square {
     if (this.state > 0){
       //if selected, make tile gray
       if (this.selected.length > 0){
-        image(imgAlt,this.position.x * IMG_SIZE,this.position.y * IMG_SIZE,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+        image(imgAlt,this.position.x * (width/10),this.position.y * (width/10),(width/10),(width/10),0,0,this.srcWidth, this.srcWidth);
         //check if current client selected tile
         if (this.selected == socket.id){
-          image(client,this.position.x * IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
+          image(client,this.position.x * (width/10),this.position.y* (width/10),(width/10),(width/10));
         } 
         //otherwise, indicate alternate socket selected tile
         else{
-          image(clientAlt,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
+          image(clientAlt,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10));
         }
       }
       //otherwise, default to black tile
-      else image(img,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+      else image(img,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10),0,0,this.srcWidth, this.srcWidth);
     } 
     
     else{
       if (this.placeable == true && moveType > -1){
-        image(placeableTile,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
+        image(placeableTile,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10));
       }
     }
 
     if (this.selected.length > 0){
       //check if current client selected tile
       if (this.selected == socket.id){
-        image(client,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
+        image(client,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10));
       } 
       //otherwise, indicate alternate socket selected tile
       else{
-        image(clientAlt,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE);
+        image(clientAlt,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10));
       }
     }
   }
@@ -150,7 +150,14 @@ function setup() {
   });
 
   //Set up drawing conditions
-  const p5 = createCanvas(IMG_SIZE*CANVAS_COUNT, IMG_SIZE*CANVAS_COUNT);
+  let initWidth;
+  if (windowWidth >= 320 && windowWidth < 512){
+    initWidth = windowWidth - 32;
+  }
+  else if (windowWidth >= 512){
+    initWidth = 480;
+  }
+  const p5 = createCanvas(initWidth, initWidth);
   p5.parent("canvas_container")
   p5.addClass("canvas_container__content");
   noSmooth();
@@ -241,8 +248,8 @@ function draw() {
 }
 
 function mouseMoved() {
-  if (moveType > -1 && [...placeable].some(element => (element.position.x * IMG_SIZE) < mouseX && (element.position.x + 1) * IMG_SIZE > mouseX && (element.position.y* IMG_SIZE) < mouseY && (element.position.y + 1)* IMG_SIZE > mouseY)) cursor(HAND);
-  else if (moveType == -1 && squares.some(element => element.state > -1 && (element.position.x * IMG_SIZE) < mouseX && (element.position.x + 1) * IMG_SIZE > mouseX && (element.position.y* IMG_SIZE) < mouseY && (element.position.y + 1)* IMG_SIZE > mouseY)) cursor(HAND);
+  if (moveType > -1 && [...placeable].some(element => (element.position.x * (width/10)) < mouseX && (element.position.x + 1) * (width/10) > mouseX && (element.position.y* (width/10)) < mouseY && (element.position.y + 1)* (width/10) > mouseY)) cursor(HAND);
+  else if (moveType == -1 && squares.some(element => element.state > -1 && (element.position.x * (width/10)) < mouseX && (element.position.x + 1) * (width/10) > mouseX && (element.position.y* (width/10)) < mouseY && (element.position.y + 1)* (width/10) > mouseY)) cursor(HAND);
   else cursor(ARROW)
 }
 
@@ -253,7 +260,7 @@ function mousePressed(event) {
   console.log(mouseX);
   console.log(mouseY);
   //Find tile that was clicked
-  const active = (element) => (element.position.x * IMG_SIZE < mouseX && (element.position.x+1)* IMG_SIZE > mouseX) && ((element.position.y)* IMG_SIZE < mouseY && (element.position.y+1) * IMG_SIZE > mouseY);
+  const active = (element) => (element.position.x * (width/10) < mouseX && (element.position.x+1)* (width/10) > mouseX) && ((element.position.y)* (width/10) < mouseY && (element.position.y+1) * (width/10) > mouseY);
   const clickedSquare = squares.find(active);
   console.log(clickedSquare);
   if (keyIsDown(SHIFT)) {
@@ -299,8 +306,6 @@ function windowResized() {
   else if (windowWidth >= 512){
     resizeCanvas(480, 480);
   }
-  console.log(windowWidth);
-  console.log(windowHeight);
   //resizeCanvas(windowWidth, windowHeight);
 }
 
