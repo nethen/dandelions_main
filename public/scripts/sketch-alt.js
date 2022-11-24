@@ -292,6 +292,18 @@ function mousePressed(event) {
   }
 }
 
+function windowResized() {
+  if (windowWidth >= 320 && windowWidth < 512){
+    resizeCanvas(windowWidth-32, windowWidth-32);
+  }
+  else if (windowWidth >= 512){
+    resizeCanvas(480, 480);
+  }
+  console.log(windowWidth);
+  console.log(windowHeight);
+  //resizeCanvas(windowWidth, windowHeight);
+}
+
 //Ripple command based on central square (defunct)
 const rippleAdjacent = (centerSquare) => {
   const adjacentSquares = squares.filter(square => ( (Math.abs(square.position.x-centerSquare.position.x) < 2 ) && (Math.abs(square.position.y-centerSquare.position.y) < 2) && square != centerSquare));
