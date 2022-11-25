@@ -102,7 +102,7 @@ setInterval(function() {
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 	//console.log(updatePlaceable());
-	socket.emit('pageLoad', [{x: Math.floor(Math.random()*((SQUARES/9)-1)), y: Math.floor(Math.random()*((SQUARES/9)-1))},loadSquares,placeholders]);
+	socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-1)/9))), y: Math.floor(Math.random()*(((SQUARES-1)/9)))},loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
