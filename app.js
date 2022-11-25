@@ -13,8 +13,7 @@ let rippleSquares =[];
 let placeholders = [];
 
 //Size of canvas
-const SQUARES = 100;
-const SIZE = 64;
+const SQUARES = 64;
 
 //Set up connection
 const http = require('http')
@@ -48,8 +47,8 @@ const calcripple = (comparedState, updateState) => {
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	if (((i-4)%9 == 0) && ((j-4)%9 == 0)) loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, Math.floor(Math.random() * 5)));
-		else loadSquares.push(new SquareHolder(i * SIZE,j * SIZE, -1));
+    	if (((i-4)%9 == 0) && ((j-4)%9 == 0)) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
+		else loadSquares.push(new SquareHolder(i,j, -1));
     }
   }
 
@@ -103,7 +102,7 @@ setInterval(function() {
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 	//console.log(updatePlaceable());
-	socket.emit('pageLoad', [{x: Math.floor(Math.random()*11), y: Math.floor(Math.random()*11)},loadSquares,placeholders]);
+	socket.emit('pageLoad', [{x: Math.floor(Math.random()*((SQUARES/9)-1)), y: Math.floor(Math.random()*((SQUARES/9)-1))},loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
@@ -117,14 +116,21 @@ io.sockets.on('connection', (socket) => {
 		//console.log(data);
 		//CHECK IF USER IS SELECTING TILE
 		if (data.selected === true) {
+			const placeDupe = placeholders.find(element => element.id == socket.id);
+			if (placeDupe){
+				const tempDupe = tempSquares.find(element => element.position.x == placeDupe.x && element.position.y == placeDupe.y);
+				tempSquares.splice(tempSquares.indexOf(tempDupe), 1);
+				placeholders.splice(placeholders.indexOf(placeDupe), 1);
+				io.emit('placeholderUpdate',{x: placeDupe.x, y: placeDupe.y, id: socket.id, onCanvas: false});
+			}
 			tempSquares.push(new SquareHolder(data.position.x, data.position.y, data.state));
 			placeholders.push({x: data.position.x, y: data.position.y, id: socket.id, onCanvas: true});
 			io.emit('placeholderUpdate',{x: data.position.x, y: data.position.y, id: socket.id, onCanvas: true});
 			//Iterate in a 3x3 area around selected tile
 			for (let i = 0; i < 3; i++){
 				for (let j = 0; j < 3; j++){
-					let tempX = data.position.x + (SIZE * i) - SIZE;
-					let tempY = data.position.y + (SIZE * j) - SIZE;
+					let tempX = data.position.x + (i) - 1;
+					let tempY = data.position.y + (j) - 1;
 
 					if (tempX >= 0 && tempY >= 0){
 						//Isolate tiles surrounding selected cell
