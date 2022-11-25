@@ -47,7 +47,8 @@ const calcripple = (comparedState, updateState) => {
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	if (((i-4)%9 == 0) && ((j-4)%9 == 0)) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
+		let randomChance = Math.random();
+    	if (randomChance < 0.7) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
 		else loadSquares.push(new SquareHolder(i,j, -1));
     }
   }
