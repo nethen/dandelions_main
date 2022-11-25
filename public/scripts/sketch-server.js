@@ -189,9 +189,9 @@ function setup() {
         const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
         //Start animation
         //console.log(element.state.state);
-        if (element.state.state > 0){
-        correspondingSquare.ripple(element.state.state);
-        correspondingSquare.startMoving();
+        if (element.state.state > 0 && correspondingSquare){
+          correspondingSquare.ripple(element.state.state);
+          correspondingSquare.startMoving();
         }
       })
     }
