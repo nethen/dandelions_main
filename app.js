@@ -48,7 +48,7 @@ const calcripple = (comparedState, updateState) => {
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
 		let randomChance = Math.random();
-    	if (randomChance < 0.7) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
+    	if (randomChance < 0.25) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
 		else loadSquares.push(new SquareHolder(i,j, -1));
     }
   }
