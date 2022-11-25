@@ -9,7 +9,7 @@ let id;
 let moveChosen = null;
 //let moveType = Math.floor(Math.random()*6) - 1;
 let moveType = Math.floor(Math.random()*5)
-console.log(moveType)
+//console.log(moveType)
 let globalPos;
 //let placeable = [];
 let placeable = new Set();
@@ -188,7 +188,7 @@ function setup() {
       data[1].forEach(element => {
         const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
         //Start animation
-        console.log(element.state.state);
+        //console.log(element.state.state);
         if (element.state.state > 0){
         correspondingSquare.ripple(element.state.state);
         correspondingSquare.startMoving();
