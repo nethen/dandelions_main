@@ -121,6 +121,12 @@ io.sockets.on('connection', (socket) => {
 				const tempDupe = tempSquares.find(element => element.position.x == placeDupe.x && element.position.y == placeDupe.y);
 				tempSquares.splice(tempSquares.indexOf(tempDupe), 1);
 				placeholders.splice(placeholders.indexOf(placeDupe), 1);
+				rippleSquares.forEach(element => {
+					element.state.forEach(currTile => {
+						if(currTile.owner.x == placeDupe.x && currTile.owner.y == placeDupe.y) element.state.splice(element.state.indexOf(currTile), 1);
+					})
+				})
+				rippleSquares = (rippleSquares.filter(element => element.state.length > 0));
 				io.emit('placeholderUpdate',{x: placeDupe.x, y: placeDupe.y, id: socket.id, onCanvas: false});
 			}
 			tempSquares.push(new SquareHolder(data.position.x, data.position.y, data.state));
@@ -165,6 +171,7 @@ io.sockets.on('connection', (socket) => {
 			rippleSquares = (rippleSquares.filter(element => element.state.length > 0));
 			tempSquares.splice(tempSquares.indexOf(a),1);
 		}
+		//console.log(rippleSquares.length);
 	});
 	socket.on('disconnect', () => console.log('Client has disconnected'))
 })
