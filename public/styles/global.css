@@ -25,13 +25,39 @@ html, body {
   padding: 0;
 }
 
-.canvas_container {
+.client {
   display: flex;
   justify-content: center;
 }
-.canvas_container canvas {
-  display: block;
+.client__wrapper {
   border: solid 0.25rem black;
+}
+.client__wrapper canvas {
+  display: block;
+  border-bottom: solid 0.25rem black;
+}
+.client__menu {
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.client__menu__indicator {
+  width: 2rem;
+}
+.client__menu__indicator img {
+  width: 100%;
+  height: auto;
+}
+.client__menu h2 {
+  width: 9rem;
+  margin: 0.5rem 0;
+  font-size: 3rem;
+  text-transform: uppercase;
+}
+.client__menu h2 span#counter {
+  vertical-align: super;
+  font-size: 1.5rem;
 }
 
 body {

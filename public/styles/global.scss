@@ -4,13 +4,42 @@ html, body {
     margin: 0;
     padding: 0;
   }
-.canvas_container{
+.client{
   display: flex;
   justify-content: center;
-canvas {
-  display: block;
-  border: solid 0.25rem black;
-}
+  &__wrapper{
+    border: solid 0.25rem black;
+
+      canvas {
+      display: block;
+      border-bottom: solid 0.25rem black;
+    }
+  }
+  &__menu{
+    padding:0 1rem;
+    display:flex;
+    align-items:center;
+    gap:1rem;
+
+    &__indicator{
+      width: 2rem;
+      img{
+        width:100%;
+        height:auto;
+      }
+    }
+
+    h2{
+      width:9rem;
+      margin: 0.5rem 0;
+      font-size: 3rem;
+      text-transform: uppercase;
+      & span#counter{
+        vertical-align: super;
+        font-size: 1.5rem;
+      }
+    }
+  }
 }
   
 
