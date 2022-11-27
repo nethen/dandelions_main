@@ -25,7 +25,11 @@ html, body {
   padding: 0;
 }
 
-canvas {
+.canvas_container {
+  display: flex;
+  justify-content: center;
+}
+.canvas_container canvas {
   display: block;
   border: solid 0.25rem black;
 }

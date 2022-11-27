@@ -4,10 +4,14 @@ html, body {
     margin: 0;
     padding: 0;
   }
-  canvas {
-    display: block;
-    border: solid 0.25rem black;
-  }
+.canvas_container{
+  display: flex;
+  justify-content: center;
+canvas {
+  display: block;
+  border: solid 0.25rem black;
+}
+}
   
 
 body{
