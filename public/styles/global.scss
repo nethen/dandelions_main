@@ -5,8 +5,11 @@ html, body {
     padding: 0;
   }
 .client{
+  height:100vh;
+  min-height: 35.5rem;
   display: flex;
   justify-content: center;
+  align-items: center;
   &__wrapper{
     border: solid 0.25rem black;
 
@@ -16,6 +19,7 @@ html, body {
     }
   }
   &__menu{
+    position: relative;
     padding:0 1rem;
     display:flex;
     align-items:center;
@@ -27,6 +31,10 @@ html, body {
         width:100%;
         height:auto;
       }
+    }
+
+    &__macros{
+      position:absolute;
     }
 
     h2{

@@ -26,8 +26,11 @@ html, body {
 }
 
 .client {
+  height: 100vh;
+  min-height: 35.5rem;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 .client__wrapper {
   border: solid 0.25rem black;
@@ -37,6 +40,7 @@ html, body {
   border-bottom: solid 0.25rem black;
 }
 .client__menu {
+  position: relative;
   padding: 0 1rem;
   display: flex;
   align-items: center;
@@ -48,6 +52,9 @@ html, body {
 .client__menu__indicator img {
   width: 100%;
   height: auto;
+}
+.client__menu__macros {
+  position: absolute;
 }
 .client__menu h2 {
   width: 9rem;
