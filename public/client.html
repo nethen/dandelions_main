@@ -13,19 +13,32 @@
     <body>
         <section class="client">
             <nav class="client__nav">
-                <a> </a>
+                <a> 
+                    <img src="assets/mdi_information.svg">
+                </a>
+                <a> 
+                    <img src="assets/mdi_help-circle.svg">
+                </a>
             </nav>
             <div class="client__wrapper">
                 <div class="client__canvas" id="canvas_container"></div>
                 <div class="client__menu">
-                    <h2>
-                        <span id="move">Move</span><span id="counter">X</span> 
-                    </h2>
-                    <div class="client__menu__indicator">
-                        <img id="indicator" src="assets/stages/stage1.png" alt="Square with checkerboard pattern">
+                    <div class="client__menu__wrapper">
+                        <div class="client__menu__macros">
+                            <p>Edit</p>
+                            <p>Move</p>
+                        </div>
+                        <div class="client__menu__modify">
+                            <p>
+                                <span id="move">Move</span><span id="counter">X</span> 
+                            </p>
+                            <div class="client__menu__indicator">
+                                <img id="indicator" src="assets/stages/stage1.png" alt="Square with checkerboard pattern">
+                            </div>
+                        </div>
                     </div>
-                    <div class="client__menu__macros">
-
+                    <div class="client__menu__toggle" onclick="updateToggle()">
+                        <img src="assets/mdi_triangle-small-down.svg">
                     </div>
                 </div>
             </div>

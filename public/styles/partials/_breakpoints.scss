@@ -1,0 +1,13 @@
+// Medium devices
+ @mixin md {
+    @media (min-width: 768px) {
+        @content;
+    }
+ }
+ 
+ // Large devices
+ @mixin lg {
+    @media (min-width: 1200px) {
+        @content;
+    }
+ }

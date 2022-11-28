@@ -362,3 +362,16 @@ const updateMoveText = () => {
     }
   
 }
+
+const updateToggle = () => {
+  const toggle = document.querySelector('.client__menu__toggle');
+  const wrapper = document.querySelector('.client__menu__wrapper');
+  if (toggle.classList.contains("client__menu__toggle--active")) {
+    toggle.classList.remove("client__menu__toggle--active");
+    wrapper.classList.remove("client__menu__wrapper--active");
+  }
+  else {
+    toggle.classList.add("client__menu__toggle--active");
+    wrapper.classList.add("client__menu__wrapper--active");
+  }
+}
