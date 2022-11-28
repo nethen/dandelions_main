@@ -25,6 +25,11 @@ html, body {
   padding: 0;
 }
 
+img {
+  width: 100%;
+  height: auto;
+}
+
 .client {
   height: 100vh;
   min-height: 35.5rem;
@@ -44,7 +49,7 @@ html, body {
     width: 30rem;
   }
 }
-.client__nav img {
+.client__nav a {
   width: 2rem;
 }
 .client__wrapper {
@@ -74,15 +79,12 @@ html, body {
   right: 0;
 }
 .client__menu__toggle img {
-  width: 100%;
-  height: auto;
   transition: all 0.3s ease;
 }
 .client__menu__toggle--active img {
   transform: rotate(180deg);
 }
 .client__menu p {
-  width: min(30vw, 9rem);
   margin: 0.5rem 0;
   font-size: min(10vw, 3rem);
   font-weight: 600;
@@ -91,6 +93,9 @@ html, body {
 .client__menu p span#counter {
   vertical-align: super;
   font-size: 1.5rem;
+}
+.client__menu__modify p {
+  width: min(30vw, 9rem);
 }
 .client__menu__wrapper {
   position: relative;
@@ -105,30 +110,42 @@ html, body {
 .client__menu__indicator {
   width: 2rem;
 }
-.client__menu__indicator img {
-  width: 100%;
-  height: auto;
+.client__menu__migrate_CTA {
+  width: min(10vw, 2.5rem);
 }
-.client__menu__modify, .client__menu__macros {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.client__menu__macros {
   height: 4.25rem;
   min-width: calc(100% - 3rem);
   max-width: 30rem;
   margin: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 @media (min-width: 768px) {
-  .client__menu__modify, .client__menu__macros {
+  .client__menu__macros {
     width: 30rem;
   }
 }
-.client__menu__macros {
-  display: flex;
-}
 .client__menu__macros p {
-  width: auto;
   text-decoration: underline;
+}
+.client__menu__modify, .client__menu__move {
+  height: 4.25rem;
+  min-width: calc(100% - 3rem);
+  max-width: 30rem;
+  margin: 0 0.5rem;
+  display: none;
+}
+@media (min-width: 768px) {
+  .client__menu__modify, .client__menu__move {
+    width: 30rem;
+  }
+}
+.client__menu__modify--active, .client__menu__move--active {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 body {

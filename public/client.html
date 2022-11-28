@@ -25,15 +25,21 @@
                 <div class="client__menu">
                     <div class="client__menu__wrapper">
                         <div class="client__menu__macros">
-                            <p>Edit</p>
-                            <p>Move</p>
+                            <p onclick="updateMenu('edit')">Edit</p>
+                            <p onclick="updateMenu('move')">Move</p>
                         </div>
-                        <div class="client__menu__modify">
+                        <div class="client__menu__modify client__menu__modify--active">
                             <p>
-                                <span id="move">Move</span><span id="counter">X</span> 
+                                <span id="move">Action</span><span id="counter">X</span> 
                             </p>
                             <div class="client__menu__indicator">
                                 <img id="indicator" src="assets/stages/stage1.png" alt="Square with checkerboard pattern">
+                            </div>
+                        </div>
+                        <div class="client__menu__move">
+                            <p>Move</p>
+                            <div class="client__menu__migrate_CTA" onclick="migrate()">
+                                <img src="assets/mdi_arrow-right-bold-circle.svg" alt="Square with checkerboard pattern">
                             </div>
                         </div>
                     </div>

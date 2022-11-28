@@ -375,3 +375,24 @@ const updateToggle = () => {
     wrapper.classList.add("client__menu__wrapper--active");
   }
 }
+
+const updateMenu = (action) => {
+  let activeMenu;
+  const toggle = document.querySelector('.client__menu__toggle');
+  const wrapper = document.querySelector('.client__menu__wrapper');
+  if (action == 'edit'){
+    activeMenu = document.querySelector('.client__menu__modify');
+    activeMenu.classList.add("client__menu__modify--active");
+    document.querySelector('.client__menu__move').classList.remove("client__menu__move--active");
+  } else{
+    activeMenu = document.querySelector('.client__menu__move');
+    activeMenu.classList.add("client__menu__move--active");
+    document.querySelector('.client__menu__modify').classList.remove("client__menu__modify--active");
+  }
+  toggle.classList.remove("client__menu__toggle--active");
+  wrapper.classList.remove("client__menu__wrapper--active");
+}
+
+const migrate = () => {
+  socket.emit('migrate', true);
+}

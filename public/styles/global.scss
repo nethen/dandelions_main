@@ -5,6 +5,11 @@ html, body {
     margin: 0;
     padding: 0;
   }
+
+img{
+  width: 100%;
+  height: auto;
+}
 .client{
   height:100vh;
   min-height: 35.5rem;
@@ -23,7 +28,7 @@ html, body {
     display:flex;
     justify-content: flex-end;
     
-    img{
+    a{
       width:2rem;
     }
   }
@@ -54,8 +59,6 @@ html, body {
       right: 0;
 
       img{
-        width:100%;
-        height:auto;
         transition: all 0.3s ease;
       }
 
@@ -67,7 +70,6 @@ html, body {
     }
 
     p{
-      width: min(30vw, 9rem);
       margin: 0.5rem 0;
       font-size: min(10vw, 3rem);
       font-weight: 600;
@@ -77,6 +79,10 @@ html, body {
         font-size: 1.5rem;
       }
     }
+    &__modify p{
+      width: min(30vw, 9rem);
+    }
+
     &__wrapper{
       position:relative;
       display:flex;
@@ -91,15 +97,13 @@ html, body {
 
     &__indicator{
       width: 2rem;
-      img{
-        width:100%;
-        height:auto;
-      }
     }
-    &__modify, &__macros{
-      display:flex;
-      align-items:center;
-      gap:1rem;
+
+    &__migrate_CTA{
+      width: min(10vw, 2.5rem);
+    }
+
+    &__macros{
       height: 4.25rem;
 
       min-width: calc(100% - 3rem);
@@ -109,13 +113,34 @@ html, body {
       @include md{
         width: 30rem;
       }
-    }
-    &__macros{
+
       display:flex;
-      
+      align-items:center;
+      gap:1rem;
+
       p{
-        width:auto;
+
         text-decoration: underline;
+      }
+    }
+
+    &__modify, &__move{
+      height: 4.25rem;
+
+      min-width: calc(100% - 3rem);
+      max-width: 30rem;
+
+      margin: 0 0.5rem;
+      @include md{
+        width: 30rem;
+      }
+
+      display: none;
+      
+      &--active{
+        display: flex;
+        align-items:center;
+        gap:1rem;
       }
     }
   }

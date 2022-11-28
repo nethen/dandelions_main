@@ -112,6 +112,10 @@ io.sockets.on('connection', (socket) => {
 		console.log(loadSquares.find(element => data.position.x == element.position.x && data.position.y == element.position.y))
 	})
 
+	socket.on('migrate',(data) => {
+		socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-1)/9))), y: Math.floor(Math.random()*(((SQUARES-1)/9)))},loadSquares,placeholders]);
+	})
+
 	socket.on('squareUpdate',(data) => {
 		//console.log(data);
 		//CHECK IF USER IS SELECTING TILE
