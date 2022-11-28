@@ -114,6 +114,7 @@ img {
 }
 .client__menu__migrate_CTA {
   width: min(10vw, 2.5rem);
+  cursor: pointer;
 }
 .client__menu__macros {
   height: 4.25rem;
