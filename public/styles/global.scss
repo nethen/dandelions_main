@@ -30,6 +30,7 @@ img{
     
     a{
       width:2rem;
+      cursor: pointer;
     }
   }
 
@@ -57,6 +58,7 @@ img{
       height: 3rem;
       top: 0.625rem;
       right: 0;
+      cursor: pointer;
 
       img{
         transition: all 0.3s ease;
@@ -119,7 +121,7 @@ img{
       gap:1rem;
 
       p{
-
+        cursor: pointer;
         text-decoration: underline;
       }
     }

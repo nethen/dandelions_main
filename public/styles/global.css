@@ -51,6 +51,7 @@ img {
 }
 .client__nav a {
   width: 2rem;
+  cursor: pointer;
 }
 .client__wrapper {
   width: calc(100% - 2rem);
@@ -77,6 +78,7 @@ img {
   height: 3rem;
   top: 0.625rem;
   right: 0;
+  cursor: pointer;
 }
 .client__menu__toggle img {
   transition: all 0.3s ease;
@@ -128,6 +130,7 @@ img {
   }
 }
 .client__menu__macros p {
+  cursor: pointer;
   text-decoration: underline;
 }
 .client__menu__modify, .client__menu__move {
