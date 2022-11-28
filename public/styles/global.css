@@ -111,6 +111,10 @@ img {
 }
 .client__menu__indicator {
   width: 2rem;
+  display: none;
+}
+.client__menu__indicator--active {
+  display: block;
 }
 .client__menu__migrate_CTA {
   width: min(10vw, 2.5rem);

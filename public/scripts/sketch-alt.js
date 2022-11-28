@@ -350,15 +350,16 @@ const updateMoveText = () => {
   else moveType = Math.floor(Math.random()*5);
   const move = document.querySelector('#move')
   const indicator = document.querySelector('#indicator')
+  const indicatorDiv = document.querySelector('.client__menu__indicator')
     if(moveType > -1) {
       move.innerText = "Build";
       const path = "assets/stages/stage"+(moveType + 1)+".png";
       indicator.src = path
-      if(indicator.classList.contains("bottomBar__indicator--inactive")) indicator.classList.remove("bottomBar__indicator--inactive");
+      indicatorDiv.classList.add("client__menu__indicator--active");
     }
     else {
       move.innerText = "Erase";
-      if(indicator.classList.contains("bottomBar__indicator--inactive") == false) indicator.classList.add("bottomBar__indicator--inactive");
+      indicatorDiv.classList.remove("client__menu__indicator--active");
     }
   
 }

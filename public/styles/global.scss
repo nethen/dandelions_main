@@ -99,6 +99,10 @@ img{
 
     &__indicator{
       width: 2rem;
+      display: none;
+      &--active{
+        display:block;
+      }
     }
 
     &__migrate_CTA{
