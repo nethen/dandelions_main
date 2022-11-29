@@ -1,7 +1,7 @@
 p5.disableFriendlyErrors = true; // disables FES
 
 //instantiate constants and global vars
-const IMG_SIZE = 48;
+const IMG_SIZE = 32;
 const CANVAS_COUNT = 64;
 const TIMER_DURATION = 8;
 let socket;
@@ -116,7 +116,8 @@ function setup() {
   //Connect to server (localhost for debug)
   //socket = io.connect('http://localhost:3000')
   //socket = io.connect('192.168.0.83:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
+  socket = io.connect('mg-dandelions.live')
   //Check for incoming tile data on first load
   socket.on('pageLoad',(data) => {
     squares = [];
