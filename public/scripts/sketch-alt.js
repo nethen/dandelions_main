@@ -368,7 +368,11 @@ function updatePlaceable(){
 
 const updateMoveText = () => {
   const currTiles = squares.filter(element => element.state > -1).length;
-  if (currTiles > 1) moveType = (Math.floor(Math.random()*6)-1);
+  if (currTiles > 10) {
+    const rand = Math.random();
+    if (rand > 0.1) moveType = Math.floor(Math.random()*5);
+    else moveType = -1;
+  }
   else moveType = Math.floor(Math.random()*5);
   const move = document.querySelector('#move')
   const indicator = document.querySelector('#indicator')
