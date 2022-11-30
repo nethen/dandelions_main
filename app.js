@@ -15,7 +15,7 @@ let rippleSquares =[];
 let placeholders = [];
 
 //Size of canvas
-const SQUARES = 64;
+const SQUARES = 46;
 
 //Set up connection
 const http = require('http')
@@ -46,10 +46,22 @@ const calcripple = (comparedState, updateState) => {
     else if (updateState.state > Math.log2(comparedState.state.state)-2) updateState.state --;
   }
 
+  let initialSeeds = [];
+  for (let i = 0; i < 5; i ++){
+	for (let j = 0; j < 5; j++){
+		let x = (9 * i) + Math.floor(Math.random() * 10);
+		let y = (9 * j) + Math.floor(Math.random() * 10);
+		initialSeeds.push([x,y]);
+	}
+}
+
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	if (((i-4)%9 == 0) && ((j-4)%9 == 0)) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
+		if (initialSeeds.some(element => element[0] == i && element[1] == j)){
+			loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
+		}
+    	//if (((i-4)%9 == 0) && ((j-4)%9 == 0)) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
 		else loadSquares.push(new SquareHolder(i,j, -1));
     }
   }
@@ -101,11 +113,10 @@ let serverRefresh = setInterval(function(){
 	});
 
 	//decay counter
-	for (let i = 0; i < 7; i ++){
-		for (let j = 0; j < 7; j++){
+	for (let i = 0; i < 5; i ++){
+		for (let j = 0; j < 5; j++){
 			const x = loadSquares.filter(element => element.position.x >= (9 * i) && element.position.x < ((9 * i)+10) && element.position.y >= (9 * j) && element.position.y < ((9 * j)+10))
 			let pass = x.some(element => element.state > -1);
-			debugger;
 			if (pass == false){
 				let randInd = Math.floor(Math.random() * x.length);
 				x[randInd].state = Math.floor(Math.random() * 5);

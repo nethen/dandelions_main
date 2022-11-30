@@ -2,7 +2,7 @@ p5.disableFriendlyErrors = true; // disables FES
 
 //instantiate constants and global vars
 const IMG_SIZE = 32;
-const CANVAS_COUNT = 64;
+const CANVAS_COUNT = 46;
 const TIMER_DURATION = 8;
 let socket;
 let id;
