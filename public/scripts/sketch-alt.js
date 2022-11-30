@@ -15,7 +15,7 @@ let placeable = new Set();
 
 //encapsulate data related to tiles
 class Square {
-  constructor(x,y, state){
+  constructor(x,y, state, health){
     //position relative to client & server (currently same)
     this.position = {x: x, y: y};
     //this.globalPos = {x: x, y: y};
@@ -33,6 +33,7 @@ class Square {
     //owner of selected tile
     this.selected = "";
     this.selectable = false;
+    this.health = health;
   }
   //changed display method to image-based rendering (avoid load on p5js)
   display(){
@@ -50,7 +51,14 @@ class Square {
         }
       }
       //otherwise, default to black tile
-      else image(img,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10),0,0,this.srcWidth, this.srcWidth);
+      else {
+        let opacity;
+        if (this.health > 16) opacity = 255;
+        else opacity = (this.health * 15);
+        tint(255, opacity);
+        image(img,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10),0,0,this.srcWidth, this.srcWidth);
+        noTint();
+      }
     } 
     
     else{
@@ -133,7 +141,7 @@ function setup() {
         holdState = Math.pow(2,2 + square.state);
         //console.log(holdState);
       }
-      squares.push(new Square(square.position.x, square.position.y, holdState));
+      squares.push(new Square(square.position.x, square.position.y, holdState, square.health));
       //squares.push(new Square(square.position.x, square.position.y, Math.pow(2,2 + square.state)));
     });
     // placeable = updatePlaceable();
@@ -208,12 +216,16 @@ function setup() {
       moveChosen = null;
       squares.forEach(element => {
         element.selected ="";
+        if (element.health > 0) element.health --;
       })
       data[0].forEach(element => {
         //console.log(element);
         const x = squares.find(square => square.position.x+globalPos.x == element.position.x && square.position.y+globalPos.y == element.position.y)
         if (x){
-          if (element.state > -1) x.srcWidth = element.state;
+          if (element.state > -1) {
+            x.srcWidth = element.state;
+            x.health = 20;
+          }
           x.state = element.state;
         }
       })
@@ -230,8 +242,17 @@ function setup() {
         if (element.state.state > 0 && correspondingSquare){
           correspondingSquare.ripple(element.state.state);
           correspondingSquare.startMoving();
+          correspondingSquare.health = 20;
         }
       })
+
+      //decay clear
+      squares.forEach(element => {
+        if (element.health == 0 && element.state > 0) {
+          element.state = -1;
+          element.srcWidth = width/10;
+        }
+      });
     }
   });
 }

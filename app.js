@@ -3,6 +3,8 @@ class SquareHolder {
 	constructor (x, y, state){
 		this.position = {x: x, y: y};
 		this.state = state;
+		if(this.state == -1) this.health = 0;
+		else this.health = 20;
 	}
 }
 
@@ -78,14 +80,40 @@ let serverRefresh = setInterval(function(){
 		const pos = element.position;
 		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
 		//console.log(element.state);
-		if (element.state == -1)  a.state = -1;
-		else a.state = Math.log2(element.state) - 2;
+		if (element.state == -1)  {
+			a.state = -1;
+			a.health = 0;
+		}
+		else {
+			a.state = Math.log2(element.state) - 2;
+			a.health = 20;
+		}
 	});
 
 	loadSquares.forEach((element) => {
 		const a = rippleSquares.find(newElement => newElement.position.x == element.position.x &&  newElement.position.y == element.position.y)	
-		if (a) calcripple(a, element);
+		if (a) {
+			calcripple(a, element);
+			element.health = 20;
+		}
+		else if (element.health > 0) element.health--;
+		if (element.health == 0) element.state = -1;
 	});
+
+	//decay counter
+	for (let i = 0; i < 7; i ++){
+		for (let j = 0; j < 7; j++){
+			const x = loadSquares.filter(element => element.position.x >= (9 * i) && element.position.x < ((9 * i)+10) && element.position.y >= (9 * j) && element.position.y < ((9 * j)+10))
+			let pass = x.some(element => element.state > -1);
+			debugger;
+			if (pass == false){
+				let randInd = Math.floor(Math.random() * x.length);
+				x[randInd].state = Math.floor(Math.random() * 5);
+				x[randInd].health = 20;
+				tempSquares.push(new SquareHolder(x[randInd].position.x, x[randInd].position.y, Math.pow(2, 2 + x[randInd].state)));
+			}
+		}
+	}
 	//if (rippleSquares) console.log(rippleSquares);
 	io.emit('rippleSquares', [tempSquares,rippleSquares]);
 	tempSquares = [];

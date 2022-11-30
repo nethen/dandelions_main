@@ -4,8 +4,7 @@ p5.disableFriendlyErrors = true; // disables FES
 const IMG_SIZE = 48;
 const CANVAS_COUNT = 10;
 const TIMER_DURATION = 8;
-let socket;
-let id;
+
 let moveChosen = null;
 //let moveType = Math.floor(Math.random()*6) - 1;
 let moveType;
@@ -13,6 +12,8 @@ let moveType;
 let placeable = new Set();
 
 let state = 0;
+
+let checks = [false, false, false];
 
 //encapsulate data related to tiles
 class Square {
@@ -116,8 +117,14 @@ function setup() {
   const rand = Math.floor(Math.random() * 5);
     for (let i = 0; i < 5; i++){
         for (let j = 0; j < 5; j++){
-            if (i == j && i == 2) squaresA.push(new Square(i, j, Math.pow(2,2 + rand)));
-            else squaresA.push(new Square(i, j, -1));
+            if (i == j && i == 2) {
+              squaresA.push(new Square(i, j, Math.pow(2,2 + rand)));
+              squaresB.push(new Square(i, j, Math.pow(2,2 + rand)));
+            }
+            else {
+              squaresA.push(new Square(i, j, -1));
+              squaresB.push(new Square(i, j, -1));
+            }
         } 
     }
     updatePlaceable();
@@ -166,7 +173,7 @@ function draw() {
 
 function mouseMoved() {
   if (moveType > -1 && [...placeable].some(element => (element.position.x * (width/5)) < mouseX && (element.position.x + 1) * (width/5) > mouseX && (element.position.y* (width/5)) < mouseY && (element.position.y + 1)* (width/5) > mouseY)) cursor(HAND);
-  else if (moveType == -1 && squaresA.some(element => element.state > -1 && (element.position.x * (width/5)) < mouseX && (element.position.x + 1) * (width/5) > mouseX && (element.position.y* (width/5)) < mouseY && (element.position.y + 1)* (width/5) > mouseY)) cursor(HAND);
+  else if (moveType == -1 && squaresB.some(element => element.state > -1 && (element.position.x * (width/5)) < mouseX && (element.position.x + 1) * (width/5) > mouseX && (element.position.y* (width/5)) < mouseY && (element.position.y + 1)* (width/5) > mouseY)) cursor(HAND);
   else cursor(ARROW)
 }
 
@@ -185,20 +192,44 @@ function mousePressed(event) {
   console.log(clickedSquare);
 
   if((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1)){
-    let tempMoveType = moveType;
-    if (moveType > -1) tempMoveType = Math.pow(2,2 + tempMoveType);
-        //let ripples = squaresA.filter(element => Math.abs(element.position.x - clickedSquare.position. x) <= 1 && Math.abs(element.position.y - clickedSquare.position. y) <= 1 && element != clickedSquare)
-        //console.log(ripples);
+      switch (state){
+        case 0: 
+        let tempMoveType = moveType;
+        if (moveType > -1) tempMoveType = Math.pow(2,2 + tempMoveType);      
         clickedSquare.srcWidth = tempMoveType;
         clickedSquare.state = tempMoveType;
         rippleAdjacent(clickedSquare);
-        // ripples.forEach(element => {
-        //     element.ripple();
-        //     element.startMoving();
-        // })
-        updatePlaceable();
-        if (state == 0) moveType = (Math.floor(Math.random()*5));
-        else moveType = -1;
+        for (let i = 0; i < squaresA.length; i++){
+          squaresB[i].state = squaresA[i].state;
+          squaresB[i].srcWidth = squaresA[i].srcWidth;
+        }
+        moveType = (Math.floor(Math.random()*5));
+        break;
+
+        case 1:
+        clickedSquare.state = moveType;
+        clickedSquare.srcWidth = width/5;
+        moveType = -1;
+        break;
+
+      }
+      updatePlaceable();
+      let counterA = 0;
+      let counterB = 0;
+      for (let i = 0; i < squaresA.length; i++){
+        if (squaresA[i].state > -1) counterA ++;
+      }
+      for (let i = 0; i < squaresB.length; i++){
+        if (squaresB[i].state > -1) counterB ++;
+      }
+
+      if (counterA >= 25 && state == 0) {
+        state = 1;
+        moveType = -1;
+      }
+      if (counterB == 0 && state == 1){
+        state = 2;
+      }
     }
 }
 
@@ -275,4 +306,47 @@ const updateMenu = (action) => {
 
 const migrate = () => {
   socket.emit('migrate', true);
+}
+
+const setState = (stateInput) => {
+  state = stateInput;
+}
+
+const resetBuild = () => {
+  for (let i = 0; i < squaresA.length; i++){
+    if (i == 12){
+      const x = Math.pow(2, 2+ Math.floor(Math.random()*5))
+      squaresB[i].state = x;
+      squaresB[i].srcWidth = x;
+
+      squaresA[i].state = x;
+      squaresA[i].srcWidth = x;
+    }
+    else {
+      squaresB[i].state = -1;
+      squaresB[i].srcWidth = -1;
+
+      squaresA[i].state = -1;
+      squaresA[i].srcWidth = -1;
+    }
+  }
+  updatePlaceable();
+  state = 0;
+  moveType = Math.floor(Math.random()*5);
+}
+
+const resetErase = () => {
+  for (let i = 0; i < squaresA.length; i++){
+    if (squaresB[i].state == -1){
+      const x = Math.pow(2, 2+ Math.floor(Math.random()*5))
+      squaresB[i].state = x;
+      squaresB[i].srcWidth = x;
+
+      squaresA[i].state = x;
+      squaresA[i].srcWidth = x;
+    }
+  }
+
+  state = 1;
+  moveType = -1;
 }
