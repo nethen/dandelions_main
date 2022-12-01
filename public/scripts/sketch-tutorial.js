@@ -131,12 +131,12 @@ function setup() {
     moveType = (Math.floor(Math.random()*5));
   //Set up drawing conditions
   let initWidth;
-  if (windowWidth < 512){
+  if (windowWidth < 352){
     if (windowWidth < 320) initWidth = 320;
     else initWidth = windowWidth - 32;
   }
-  else if (windowWidth >= 512){
-    initWidth = 480;
+  else if (windowWidth >= 352){
+    initWidth = 320;
   }
   const p5 = createCanvas(initWidth, initWidth);
   p5.parent("canvas_container")
@@ -234,11 +234,11 @@ function mousePressed(event) {
 }
 
 function windowResized() {
-  if (windowWidth >= 320 && windowWidth < 512){
+  if (windowWidth >= 320 && windowWidth < 352){
     resizeCanvas(windowWidth-32, windowWidth-32);
   }
-  else if (windowWidth >= 512){
-    resizeCanvas(480, 480);
+  else if (windowWidth >= 352){
+    resizeCanvas(320, 320);
   }
   //resizeCanvas(windowWidth, windowHeight);
 }

@@ -1,0 +1,167 @@
+@import "./partials/_fontStyles";
+@import "./partials/_breakpoints";
+
+body{
+    background: #000000;
+}
+
+
+.tutorial{
+  height:100vh;
+  min-height: 35.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &__nav{
+    margin: 1rem 0;
+
+    display:flex;
+    gap: 1rem;
+    
+    &__button{
+      width:100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      background: white;
+      border: 0.125rem white solid;
+      text-transform: uppercase;
+      padding: 0.5rem;
+      font-size: 1.5rem;
+
+        &--secondary{
+            background: none;
+            color: white;
+        }
+    }
+  }
+
+  &__wrapper{
+    width: calc(100% - 2rem);
+    max-width: 20rem;
+    @include md{
+      width: 20rem;
+    }
+    canvas {
+      display: block;
+    }
+  }
+
+  &__menu{
+    height: 4.25rem;
+    position: relative;
+    border-top: solid 0.25rem black;
+    overflow:hidden;
+
+    &__toggle{
+      position: absolute;
+      width: 3rem;
+      height: 3rem;
+      top: 0.625rem;
+      right: 0;
+      cursor: pointer;
+
+      img{
+        transition: all 0.3s ease;
+      }
+
+      &--active{
+        img{
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    p{
+      margin: 0.5rem 0;
+      font-size: min(10vw, 3rem);
+      font-weight: 600;
+      text-transform: uppercase;
+      & span#counter{
+        vertical-align: super;
+        font-size: 1.5rem;
+      }
+    }
+    &__modify p{
+      width: min(30vw, 9rem);
+    }
+
+    &__wrapper{
+      position:relative;
+      display:flex;
+      flex-direction: column;
+      top: -100%;
+      transition: all 0.3s ease;
+
+      &--active{
+        top: 0;
+      }
+    }
+
+    &__indicator{
+      width: 2rem;
+      display: none;
+      &--active{
+        display:block;
+      }
+    }
+
+    &__migrate_CTA{
+      width: min(10vw, 2.5rem);
+      cursor: pointer;
+    }
+
+    &__macros{
+      height: 4.25rem;
+
+      min-width: calc(100% - 3rem);
+      max-width: 30rem;
+
+      margin: 0 0.5rem;
+      @include md{
+        width: 30rem;
+      }
+
+      display:flex;
+      align-items:center;
+      gap:1rem;
+
+      p{
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+
+    &__modify, &__move{
+      height: 4.25rem;
+
+      min-width: calc(100% - 3rem);
+      max-width: 30rem;
+
+      margin: 0 0.5rem;
+      @include md{
+        width: 30rem;
+      }
+
+      display: none;
+      
+      &--active{
+        display: flex;
+        align-items:center;
+        gap:1rem;
+      }
+    }
+  }
+}
+  
+
+body{
+    font: 1rem "Apfel Grotesk", sans-serif;
+}
+
+h1{
+    font: italic 8rem "Happy Times", serif;
+}
