@@ -106,11 +106,10 @@ let squaresB = [];
 
 //load all images ahead of intial paint (first draw)
 function preload() {
- img = loadImage("assets/checker.png");
- imgAlt = loadImage("assets/checker_alt.png");
+ img = loadImage("assets/checkerW.png");
  client=loadImage("assets/client.png");
  clientAlt=loadImage("assets/client_alt.png");
- placeableTile=loadImage("assets/placeable.png");
+ placeableTile=loadImage("assets/placeable_alt.png");
 }
 
 function setup() {
@@ -145,14 +144,14 @@ function setup() {
   frameRate(30);
 
   //ONE TIME SOCKET LISTENERS GO INTO SETUP
-  background(255);
+  background(51, 48, 52);
   console.log(squaresA);
 
 }
 
 //Display all tiles every 0.3s
 function draw() {
-  background(255);
+  background(51, 48, 52);
     if (state == 0){
         for (let i = 0; i < squaresA.length; i++){
             squaresA[i].display();
