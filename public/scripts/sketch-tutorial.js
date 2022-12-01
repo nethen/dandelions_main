@@ -350,3 +350,25 @@ const resetErase = () => {
   state = 1;
   moveType = -1;
 }
+
+const backState = () => {
+  state--;
+  if (state == 0) {
+    resetBuild();
+  }
+  else{
+    
+  }
+
+}
+
+const nextState = () => {
+  state++;
+  if (state == 1) {
+    resetErase();
+  }
+  else{
+
+  }
+
+}

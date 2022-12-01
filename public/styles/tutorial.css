@@ -65,6 +65,14 @@ body {
 .tutorial__wrapper canvas {
   display: block;
 }
+.tutorial__wrapper p {
+  color: white;
+  font-size: 1rem;
+}
+.tutorial__wrapper p span {
+  text-transform: uppercase;
+  font-weight: 600;
+}
 .tutorial__menu {
   height: 4.25rem;
   position: relative;
@@ -86,6 +94,7 @@ body {
   transform: rotate(180deg);
 }
 .tutorial__menu p {
+  color: white;
   margin: 0.5rem 0;
   font-size: min(10vw, 3rem);
   font-weight: 600;
