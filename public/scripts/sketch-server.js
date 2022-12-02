@@ -2,7 +2,8 @@ p5.disableFriendlyErrors = true; // disables FES
 
 //instantiate constants and global vars
 const IMG_SIZE = 32;
-const CANVAS_COUNT = 46;
+const CANVAS_COUNT = 58;
+const CANVAS_Y = 34;
 const TIMER_DURATION = 8;
 let socket;
 let id;
@@ -153,7 +154,7 @@ function setup() {
   });
 
   //Set up drawing conditions
-  createCanvas(IMG_SIZE*CANVAS_COUNT, IMG_SIZE*CANVAS_COUNT);
+  createCanvas(IMG_SIZE*CANVAS_COUNT, IMG_SIZE*CANVAS_Y);
   noSmooth();
   frameRate(30);
 
