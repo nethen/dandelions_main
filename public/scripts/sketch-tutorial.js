@@ -227,7 +227,6 @@ function mousePressed(event) {
         moveType = -1;
         document.getElementById("back").classList.remove("tutorial__nav__button--disabled");
         document.querySelector(".tutorial__desc").textContent = "ERASE allows you to remove nodes from your grid. Select any node to ERASE it.";
-    }
 
       }
       if (counterB == 0 && state == 1){
