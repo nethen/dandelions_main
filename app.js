@@ -153,7 +153,7 @@ io.sockets.on('connection', (socket) => {
 	})
 
 	socket.on('migrate',(data) => {
-		socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-1)/9))), y: Math.floor(Math.random()*(((SQUARES-1)/9)))},loadSquares,placeholders]);
+		socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-2)/8))), y: Math.floor(Math.random()*(((SQUARES-2)/8)))},loadSquares,placeholders]);
 	})
 
 	socket.on('squareUpdate',(data) => {
