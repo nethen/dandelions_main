@@ -11,14 +11,44 @@
         <script type="text/javascript" src="scripts/sketch-alt.js"></script>
     </head>
     <body>
-        <div class="canvas_container" id="canvas_container"></div>
-        <div class="menu">
-            <h2>
-                <span id="move">Move</span> <span id="counter">X</span> 
-            </h2>
-            <div class="menu__indicator">
-                <img id="indicator" src="assets/stages/stage1.png" alt="Square with checkerboard pattern">
+        <section class="client">
+            <nav class="client__nav">
+                <a href="/tutorial.html"> 
+                    <img src="assets/mdi_help-circle.svg">
+                </a>
+            </nav>
+            <div class="client__wrapper">
+                <div class="client__canvas" id="canvas_container"></div>
+                <div class="client__menu">
+                    <div class="client__menu__wrapper">
+                        <div class="client__menu__macros">
+                            <p onclick="updateMenu('edit')">Edit</p>
+                            <p onclick="updateMenu('move')">Move</p>
+                        </div>
+                        <div class="client__menu__modify client__menu__modify--active">
+                            <p>
+                                <span id="move">xxxx</span><span id="counter">X</span> 
+                            </p>
+                            <div class="client__menu__indicator">
+                                <img id="indicator" src="assets/stages/stage1.png" alt="Square with checkerboard pattern">
+                            </div>
+                        </div>
+                        <div class="client__menu__move">
+                            <p>Move</p>
+                            <div class="client__menu__migrate_CTA" onclick="migrate()">
+                                <img src="assets/mdi_arrow-right-bold-circle.svg" alt="Square with checkerboard pattern">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="client__menu__toggle" onclick="updateToggle()">
+                        <img src="assets/mdi_triangle-small-down.svg">
+                    </div>
+                </div>
             </div>
+        </section>
+
+        <div class="modal">
+
         </div>
     </body>
 </html>

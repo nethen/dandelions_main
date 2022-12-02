@@ -3,6 +3,8 @@ class SquareHolder {
 	constructor (x, y, state){
 		this.position = {x: x, y: y};
 		this.state = state;
+		if(this.state == -1) this.health = 0;
+		else this.health = 20;
 	}
 }
 
@@ -13,7 +15,7 @@ let rippleSquares =[];
 let placeholders = [];
 
 //Size of canvas
-const SQUARES = 64;
+const SQUARES = 46;
 
 //Set up connection
 const http = require('http')
@@ -44,10 +46,22 @@ const calcripple = (comparedState, updateState) => {
     else if (updateState.state > Math.log2(comparedState.state.state)-2) updateState.state --;
   }
 
+  let initialSeeds = [];
+  for (let i = 0; i < 5; i ++){
+	for (let j = 0; j < 5; j++){
+		let x = (9 * i) + Math.floor(Math.random() * 10);
+		let y = (9 * j) + Math.floor(Math.random() * 10);
+		initialSeeds.push([x,y]);
+	}
+}
+
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
     for (let j = 0; j < SQUARES; j++){
-    	if (((i-4)%9 == 0) && ((j-4)%9 == 0)) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
+		if (initialSeeds.some(element => element[0] == i && element[1] == j)){
+			loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
+		}
+    	//if (((i-4)%9 == 0) && ((j-4)%9 == 0)) loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
 		else loadSquares.push(new SquareHolder(i,j, -1));
     }
   }
@@ -78,14 +92,39 @@ let serverRefresh = setInterval(function(){
 		const pos = element.position;
 		const a = loadSquares.find((findElement) => findElement.position.x == element.position.x && findElement.position.y == element.position.y);
 		//console.log(element.state);
-		if (element.state == -1)  a.state = -1;
-		else a.state = Math.log2(element.state) - 2;
+		if (element.state == -1)  {
+			a.state = -1;
+			a.health = 0;
+		}
+		else {
+			a.state = Math.log2(element.state) - 2;
+			a.health = 20;
+		}
 	});
 
 	loadSquares.forEach((element) => {
 		const a = rippleSquares.find(newElement => newElement.position.x == element.position.x &&  newElement.position.y == element.position.y)	
-		if (a) calcripple(a, element);
+		if (a) {
+			calcripple(a, element);
+			element.health = 20;
+		}
+		else if (element.health > 0) element.health--;
+		if (element.health == 0) element.state = -1;
 	});
+
+	//decay counter
+	for (let i = 0; i < 5; i ++){
+		for (let j = 0; j < 5; j++){
+			const x = loadSquares.filter(element => element.position.x >= (9 * i) && element.position.x < ((9 * i)+10) && element.position.y >= (9 * j) && element.position.y < ((9 * j)+10))
+			let pass = x.some(element => element.state > -1);
+			if (pass == false){
+				let randInd = Math.floor(Math.random() * x.length);
+				x[randInd].state = Math.floor(Math.random() * 5);
+				x[randInd].health = 20;
+				tempSquares.push(new SquareHolder(x[randInd].position.x, x[randInd].position.y, Math.pow(2, 2 + x[randInd].state)));
+			}
+		}
+	}
 	//if (rippleSquares) console.log(rippleSquares);
 	io.emit('rippleSquares', [tempSquares,rippleSquares]);
 	tempSquares = [];
@@ -112,6 +151,10 @@ io.sockets.on('connection', (socket) => {
 		console.log(loadSquares.find(element => data.position.x == element.position.x && data.position.y == element.position.y))
 	})
 
+	socket.on('migrate',(data) => {
+		socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-1)/9))), y: Math.floor(Math.random()*(((SQUARES-1)/9)))},loadSquares,placeholders]);
+	})
+
 	socket.on('squareUpdate',(data) => {
 		//console.log(data);
 		//CHECK IF USER IS SELECTING TILE
@@ -121,6 +164,12 @@ io.sockets.on('connection', (socket) => {
 				const tempDupe = tempSquares.find(element => element.position.x == placeDupe.x && element.position.y == placeDupe.y);
 				tempSquares.splice(tempSquares.indexOf(tempDupe), 1);
 				placeholders.splice(placeholders.indexOf(placeDupe), 1);
+				rippleSquares.forEach(element => {
+					element.state.forEach(currTile => {
+						if(currTile.owner.x == placeDupe.x && currTile.owner.y == placeDupe.y) element.state.splice(element.state.indexOf(currTile), 1);
+					})
+				})
+				rippleSquares = (rippleSquares.filter(element => element.state.length > 0));
 				io.emit('placeholderUpdate',{x: placeDupe.x, y: placeDupe.y, id: socket.id, onCanvas: false});
 			}
 			tempSquares.push(new SquareHolder(data.position.x, data.position.y, data.state));
@@ -165,6 +214,7 @@ io.sockets.on('connection', (socket) => {
 			rippleSquares = (rippleSquares.filter(element => element.state.length > 0));
 			tempSquares.splice(tempSquares.indexOf(a),1);
 		}
+		//console.log(rippleSquares.length);
 	});
 	socket.on('disconnect', () => console.log('Client has disconnected'))
 })

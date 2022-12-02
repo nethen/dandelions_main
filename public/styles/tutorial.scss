@@ -1,0 +1,78 @@
+@import "./partials/_fontStyles";
+@import "./partials/_breakpoints";
+
+body{
+    background: #333034;
+}
+
+
+.tutorial{
+  height:100vh;
+  min-height: 35.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &__nav{
+    margin: 1rem 0;
+
+    display:flex;
+    gap: 1rem;
+    
+    &__button{
+      width:100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      background: white;
+      border: 0.125rem white solid;
+      text-transform: uppercase;
+      padding: 0.5rem;
+      font-size: 1.5rem;
+
+        &--secondary{
+            background: none;
+            color: white;
+        }
+
+        &--disabled{
+            opacity: 30%;
+        }
+    }
+  }
+
+  &__canvas{
+    border: white solid 0.25rem;
+    }
+
+  &__wrapper{
+    width: calc(100% - 1.5rem);
+    max-width: 20.5rem;
+    @include md{
+      width: 20.5rem;
+    }
+    canvas {
+      display: block;
+    }
+
+    p{
+        color: white;
+      font-size: 1rem;
+      & span{
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+    }
+  }
+}
+  
+
+body{
+    font: 1rem "Apfel Grotesk", sans-serif;
+}
+
+h1{
+    font: italic 8rem "Happy Times", serif;
+}

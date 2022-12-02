@@ -1,8 +1,8 @@
 p5.disableFriendlyErrors = true; // disables FES
 
 //instantiate constants and global vars
-const IMG_SIZE = 48;
-const CANVAS_COUNT = 64;
+const IMG_SIZE = 32;
+const CANVAS_COUNT = 46;
 const TIMER_DURATION = 8;
 let socket;
 let id;
@@ -16,7 +16,7 @@ let placeable = new Set();
 
 //encapsulate data related to tiles
 class Square {
-  constructor(x,y, state){
+  constructor(x,y, state, health){
     //position relative to client & server (currently same)
     this.position = {x: x, y: y};
     //this.globalPos = {x: x, y: y};
@@ -34,6 +34,7 @@ class Square {
     //owner of selected tile
     this.selected = "";
     this.selectable = false;
+    this.health = health;
   }
   //changed display method to image-based rendering (avoid load on p5js)
   display(){
@@ -51,7 +52,14 @@ class Square {
       }
     }
     //otherwise, default to black tile
-    else image(img,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+    else {
+      let opacity;
+      if (this.health > 16) opacity = 255;
+      else opacity = (this.health * 15);
+      tint(255, opacity);
+      image(img,this.position.x* IMG_SIZE,this.position.y* IMG_SIZE,IMG_SIZE,IMG_SIZE,0,0,this.srcWidth, this.srcWidth);
+      noTint();
+    }
     }
 
     else{
@@ -116,7 +124,8 @@ function setup() {
   //Connect to server (localhost for debug)
   //socket = io.connect('http://localhost:3000')
   //socket = io.connect('192.168.0.83:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  //socket = io.connect('dandelions-iat222.herokuapp.com')
+  socket = io.connect('mg-dandelions.live')
   //Check for incoming tile data on first load
   socket.on('pageLoad',(data) => {
     squares = [];
@@ -129,9 +138,11 @@ function setup() {
         holdState = Math.pow(2,2 + square.state);
         //console.log(holdState);
       }
-      squares.push(new Square(square.position.x, square.position.y, holdState));
+      squares.push(new Square(square.position.x, square.position.y, holdState, square.health));
       //squares.push(new Square(square.position.x, square.position.y, Math.pow(2,2 + square.state)));
     });
+    console.log(data[1]);
+    console.log(squares);
     // placeable = updatePlaceable();
     //Get second half (selected tile positions & owners)
     data[2].forEach(function(element){
@@ -171,12 +182,16 @@ function setup() {
       moveChosen = null;
       squares.forEach(element => {
         element.selected ="";
+        if (element.health > 0) element.health --;
       })
       data[0].forEach(element => {
         //console.log(element);
         const x = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y)
         if (x){
-          if (element.state > -1) x.srcWidth = element.state;
+          if (element.state > -1) {
+            x.srcWidth = element.state;
+            x.health = 20;
+          }
           x.state = element.state;
         }
       })
@@ -189,11 +204,20 @@ function setup() {
         const correspondingSquare = squares.find(square => square.position.x == element.position.x && square.position.y == element.position.y);
         //Start animation
         console.log(element.state.state);
-        if (element.state.state > 0 && correspondingSquare){
-          correspondingSquare.ripple(element.state.state);
-          correspondingSquare.startMoving();
+        if (element.state.state > 0){
+        correspondingSquare.ripple(element.state.state);
+        correspondingSquare.startMoving();
+        correspondingSquare.health = 20;
         }
       })
+
+      //decay clear
+      squares.forEach(element => {
+        if (element.health == 0 && element.state > 0) {
+          element.state = -1;
+          element.srcWidth = width/10;
+        }
+      });
     }
   });
 }

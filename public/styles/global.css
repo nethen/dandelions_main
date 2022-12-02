@@ -25,9 +25,135 @@ html, body {
   padding: 0;
 }
 
-canvas {
-  display: block;
+img {
+  width: 100%;
+  height: auto;
+}
+
+.client {
+  height: 100vh;
+  min-height: 35.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.client__nav {
+  width: calc(100% - 2rem);
+  max-width: 30rem;
+  display: flex;
+  justify-content: flex-end;
+}
+@media (min-width: 768px) {
+  .client__nav {
+    width: 30rem;
+  }
+}
+.client__nav a {
+  width: 2rem;
+  cursor: pointer;
+}
+.client__wrapper {
+  width: calc(100% - 2rem);
+  max-width: 30rem;
   border: solid 0.25rem black;
+}
+@media (min-width: 768px) {
+  .client__wrapper {
+    width: 30rem;
+  }
+}
+.client__wrapper canvas {
+  display: block;
+}
+.client__menu {
+  height: 4.25rem;
+  position: relative;
+  border-top: solid 0.25rem black;
+  overflow: hidden;
+}
+.client__menu__toggle {
+  position: absolute;
+  width: 3rem;
+  height: 3rem;
+  top: 0.625rem;
+  right: 0;
+  cursor: pointer;
+}
+.client__menu__toggle img {
+  transition: all 0.3s ease;
+}
+.client__menu__toggle--active img {
+  transform: rotate(180deg);
+}
+.client__menu p {
+  margin: 0.5rem 0;
+  font-size: min(10vw, 3rem);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.client__menu p span#counter {
+  vertical-align: super;
+  font-size: 1.5rem;
+}
+.client__menu__modify p {
+  width: min(30vw, 9rem);
+}
+.client__menu__wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  top: -100%;
+  transition: all 0.3s ease;
+}
+.client__menu__wrapper--active {
+  top: 0;
+}
+.client__menu__indicator {
+  width: 2rem;
+  display: none;
+}
+.client__menu__indicator--active {
+  display: block;
+}
+.client__menu__migrate_CTA {
+  width: min(10vw, 2.5rem);
+  cursor: pointer;
+}
+.client__menu__macros {
+  height: 4.25rem;
+  min-width: calc(100% - 3rem);
+  max-width: 30rem;
+  margin: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .client__menu__macros {
+    width: 30rem;
+  }
+}
+.client__menu__macros p {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.client__menu__modify, .client__menu__move {
+  height: 4.25rem;
+  min-width: calc(100% - 3rem);
+  max-width: 30rem;
+  margin: 0 0.5rem;
+  display: none;
+}
+@media (min-width: 768px) {
+  .client__menu__modify, .client__menu__move {
+    width: 30rem;
+  }
+}
+.client__menu__modify--active, .client__menu__move--active {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 body {

@@ -1,0 +1,89 @@
+@font-face {
+  font-family: "Happy Times";
+  font-weight: 400;
+  font-style: normal;
+  src: url("../../fonts/happyTimes/happy-times-NG_regular_master_web.woff2") format("woff2"), url("../../fonts/happyTimes/happy-times-NG_regular_master_web.woff") format("woff");
+}
+@font-face {
+  font-family: "Happy Times";
+  font-weight: 400;
+  font-style: italic;
+  src: url("../../fonts/happyTimes/happy-times-NG_italic_master_web.woff2") format("woff2"), url("../../fonts/happyTimes/happy-times-NG_italic_master_web.woff") format("woff");
+}
+@font-face {
+  font-family: "Apfel Grotesk";
+  font-weight: 400;
+  src: url("../../fonts/apfel/ApfelGrotezk-Regular.woff2") format("woff2"), url("../../fonts/apfel/ApfelGrotezk-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Apfel Grotesk";
+  font-weight: 600;
+  src: url("../../fonts/apfel/ApfelGrotezk-Fett.woff2") format("woff2"), url("../../fonts/apfel/ApfelGrotezk-Fett.woff") format("woff");
+}
+body {
+  background: #333034;
+}
+
+.tutorial {
+  height: 100vh;
+  min-height: 35.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.tutorial__nav {
+  margin: 1rem 0;
+  display: flex;
+  gap: 1rem;
+}
+.tutorial__nav__button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+  border: 0.125rem white solid;
+  text-transform: uppercase;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+}
+.tutorial__nav__button--secondary {
+  background: none;
+  color: white;
+}
+.tutorial__nav__button--disabled {
+  opacity: 30%;
+}
+.tutorial__canvas {
+  border: white solid 0.25rem;
+}
+.tutorial__wrapper {
+  width: calc(100% - 1.5rem);
+  max-width: 20.5rem;
+}
+@media (min-width: 768px) {
+  .tutorial__wrapper {
+    width: 20.5rem;
+  }
+}
+.tutorial__wrapper canvas {
+  display: block;
+}
+.tutorial__wrapper p {
+  color: white;
+  font-size: 1rem;
+}
+.tutorial__wrapper p span {
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+body {
+  font: 1rem "Apfel Grotesk", sans-serif;
+}
+
+h1 {
+  font: italic 8rem "Happy Times", serif;
+}/*# sourceMappingURL=tutorial.css.map */

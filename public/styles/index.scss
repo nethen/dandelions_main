@@ -1,0 +1,40 @@
+@import "./partials/_fontStyles";
+@import "./partials/_breakpoints";
+
+main {
+    width: 100vw;
+    height: 100vh;
+    min-height: 320px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background: #333034;
+    color: white;
+    h1{
+        margin: 0;
+        font-size: min (15vw, 4rem);
+    }
+    p{
+        font-size: 2rem;
+        text-transform: uppercase;
+        animation: breathing 5s ease infinite;
+    }
+}
+
+@keyframes breathing {
+    0% {
+      opacity: 0.3;
+    }
+
+  
+    50% {
+        opacity: 1;
+    }
+  
+    100% {
+        opacity: 0.3;
+    }
+  }

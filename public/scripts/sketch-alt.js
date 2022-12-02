@@ -15,7 +15,7 @@ let placeable = new Set();
 
 //encapsulate data related to tiles
 class Square {
-  constructor(x,y, state){
+  constructor(x,y, state, health){
     //position relative to client & server (currently same)
     this.position = {x: x, y: y};
     //this.globalPos = {x: x, y: y};
@@ -33,6 +33,7 @@ class Square {
     //owner of selected tile
     this.selected = "";
     this.selectable = false;
+    this.health = health;
   }
   //changed display method to image-based rendering (avoid load on p5js)
   display(){
@@ -50,7 +51,14 @@ class Square {
         }
       }
       //otherwise, default to black tile
-      else image(img,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10),0,0,this.srcWidth, this.srcWidth);
+      else {
+        let opacity;
+        if (this.health > 16) opacity = 255;
+        else opacity = (this.health * 15);
+        tint(255, opacity);
+        image(img,this.position.x* (width/10),this.position.y* (width/10),(width/10),(width/10),0,0,this.srcWidth, this.srcWidth);
+        noTint();
+      }
     } 
     
     else{
@@ -114,7 +122,8 @@ function setup() {
   //Connect to server (localhost for debug)
   //socket = io.connect('http://localhost:3000')
   //socket = io.connect('192.168.0.83:3000')
-  socket = io.connect('dandelions-iat222.herokuapp.com')
+  // socket = io.connect('dandelions-iat222.herokuapp.com')
+  socket = io.connect('mg-dandelions.live')
   socket.on('timer', function(data) {
     document.getElementById('counter').textContent = data.countdown;
   });
@@ -132,7 +141,7 @@ function setup() {
         holdState = Math.pow(2,2 + square.state);
         //console.log(holdState);
       }
-      squares.push(new Square(square.position.x, square.position.y, holdState));
+      squares.push(new Square(square.position.x, square.position.y, holdState, square.health));
       //squares.push(new Square(square.position.x, square.position.y, Math.pow(2,2 + square.state)));
     });
     // placeable = updatePlaceable();
@@ -207,12 +216,16 @@ function setup() {
       moveChosen = null;
       squares.forEach(element => {
         element.selected ="";
+        if (element.health > 0) element.health --;
       })
       data[0].forEach(element => {
         //console.log(element);
         const x = squares.find(square => square.position.x+globalPos.x == element.position.x && square.position.y+globalPos.y == element.position.y)
         if (x){
-          if (element.state > -1) x.srcWidth = element.state;
+          if (element.state > -1) {
+            x.srcWidth = element.state;
+            x.health = 20;
+          }
           x.state = element.state;
         }
       })
@@ -229,8 +242,17 @@ function setup() {
         if (element.state.state > 0 && correspondingSquare){
           correspondingSquare.ripple(element.state.state);
           correspondingSquare.startMoving();
+          correspondingSquare.health = 20;
         }
       })
+
+      //decay clear
+      squares.forEach(element => {
+        if (element.health == 0 && element.state > 0) {
+          element.state = -1;
+          element.srcWidth = width/10;
+        }
+      });
     }
   });
 }
@@ -346,19 +368,58 @@ function updatePlaceable(){
 
 const updateMoveText = () => {
   const currTiles = squares.filter(element => element.state > -1).length;
-  if (currTiles > 1) moveType = (Math.floor(Math.random()*6)-1);
+  if (currTiles > 10) {
+    const rand = Math.random();
+    if (rand > 0.1) moveType = Math.floor(Math.random()*5);
+    else moveType = -1;
+  }
   else moveType = Math.floor(Math.random()*5);
   const move = document.querySelector('#move')
   const indicator = document.querySelector('#indicator')
+  const indicatorDiv = document.querySelector('.client__menu__indicator')
     if(moveType > -1) {
       move.innerText = "Build";
       const path = "assets/stages/stage"+(moveType + 1)+".png";
       indicator.src = path
-      if(indicator.classList.contains("bottomBar__indicator--inactive")) indicator.classList.remove("bottomBar__indicator--inactive");
+      indicatorDiv.classList.add("client__menu__indicator--active");
     }
     else {
       move.innerText = "Erase";
-      if(indicator.classList.contains("bottomBar__indicator--inactive") == false) indicator.classList.add("bottomBar__indicator--inactive");
+      indicatorDiv.classList.remove("client__menu__indicator--active");
     }
   
+}
+
+const updateToggle = () => {
+  const toggle = document.querySelector('.client__menu__toggle');
+  const wrapper = document.querySelector('.client__menu__wrapper');
+  if (toggle.classList.contains("client__menu__toggle--active")) {
+    toggle.classList.remove("client__menu__toggle--active");
+    wrapper.classList.remove("client__menu__wrapper--active");
+  }
+  else {
+    toggle.classList.add("client__menu__toggle--active");
+    wrapper.classList.add("client__menu__wrapper--active");
+  }
+}
+
+const updateMenu = (action) => {
+  let activeMenu;
+  const toggle = document.querySelector('.client__menu__toggle');
+  const wrapper = document.querySelector('.client__menu__wrapper');
+  if (action == 'edit'){
+    activeMenu = document.querySelector('.client__menu__modify');
+    activeMenu.classList.add("client__menu__modify--active");
+    document.querySelector('.client__menu__move').classList.remove("client__menu__move--active");
+  } else{
+    activeMenu = document.querySelector('.client__menu__move');
+    activeMenu.classList.add("client__menu__move--active");
+    document.querySelector('.client__menu__modify').classList.remove("client__menu__modify--active");
+  }
+  toggle.classList.remove("client__menu__toggle--active");
+  wrapper.classList.remove("client__menu__wrapper--active");
+}
+
+const migrate = () => {
+  socket.emit('migrate', true);
 }
