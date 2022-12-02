@@ -114,8 +114,8 @@ let serverRefresh = setInterval(function(){
 	});
 
 	//decay counter
-	for (let i = 0; i < 5; i ++){
-		for (let j = 0; j < 5; j++){
+	for (let i = 0; i < 7; i ++){
+		for (let j = 0; j < 4; j++){
 			const x = loadSquares.filter(element => element.position.x >= (8 * i) && element.position.x < ((8 * i)+10) && element.position.y >= (8 * j) && element.position.y < ((8 * j)+10))
 			let pass = x.some(element => element.state > -1);
 			if (pass == false){
