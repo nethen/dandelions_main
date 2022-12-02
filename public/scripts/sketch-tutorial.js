@@ -189,7 +189,7 @@ function mousePressed(event) {
   if(state == 0) clickedSquare = squaresA.find(active);
   else clickedSquare = squaresB.find(active);
   console.log(clickedSquare);
-
+  if (clickedSquare){
   if((moveType > -1 && placeable.has(clickedSquare)) || (moveType == -1 && clickedSquare.state > -1)){
       switch (state){
         case 0: 
@@ -230,6 +230,7 @@ function mousePressed(event) {
         state = 2;
       }
     }
+  }
 }
 
 function windowResized() {
@@ -351,23 +352,29 @@ const resetErase = () => {
 }
 
 const backState = () => {
-  state--;
-  if (state == 0) {
-    resetBuild();
-  }
-  else{
-    
-  }
-
+  if (state > 0) {
+    state--;
+    if (state == 0) {
+      resetBuild();
+      document.getElementById("back").classList.add("tutorial__nav__button--disabled");
+      document.querySelector(".tutorial__desc").textContent = "BUILD allows you to add nodes to your grid. Select any grey square to BUILD.";
+    }
+    else{
+      
+    }
+    }
 }
 
 const nextState = () => {
-  state++;
-  if (state == 1) {
-    resetErase();
+  if (state < 2) {
+    state++;
+    if (state == 1) {
+      resetErase();
+      document.getElementById("back").classList.remove("tutorial__nav__button--disabled");
+      document.querySelector(".tutorial__desc").textContent = "ERASE allows you to remove nodes from your grid. Select any node to ERASE it.";
+    }
+    else{
+      window.location.href="client.html";
+    }
   }
-  else{
-
-  }
-
 }

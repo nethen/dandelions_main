@@ -21,7 +21,7 @@
   src: url("../../fonts/apfel/ApfelGrotezk-Fett.woff2") format("woff2"), url("../../fonts/apfel/ApfelGrotezk-Fett.woff") format("woff");
 }
 body {
-  background: #000000;
+  background: #333034;
 }
 
 .tutorial {
@@ -53,13 +53,19 @@ body {
   background: none;
   color: white;
 }
+.tutorial__nav__button--disabled {
+  opacity: 30%;
+}
+.tutorial__canvas {
+  border: white solid 0.25rem;
+}
 .tutorial__wrapper {
-  width: calc(100% - 2rem);
-  max-width: 20rem;
+  width: calc(100% - 1.5rem);
+  max-width: 20.5rem;
 }
 @media (min-width: 768px) {
   .tutorial__wrapper {
-    width: 20rem;
+    width: 20.5rem;
   }
 }
 .tutorial__wrapper canvas {
@@ -72,96 +78,6 @@ body {
 .tutorial__wrapper p span {
   text-transform: uppercase;
   font-weight: 600;
-}
-.tutorial__menu {
-  height: 4.25rem;
-  position: relative;
-  border-top: solid 0.25rem black;
-  overflow: hidden;
-}
-.tutorial__menu__toggle {
-  position: absolute;
-  width: 3rem;
-  height: 3rem;
-  top: 0.625rem;
-  right: 0;
-  cursor: pointer;
-}
-.tutorial__menu__toggle img {
-  transition: all 0.3s ease;
-}
-.tutorial__menu__toggle--active img {
-  transform: rotate(180deg);
-}
-.tutorial__menu p {
-  color: white;
-  margin: 0.5rem 0;
-  font-size: min(10vw, 3rem);
-  font-weight: 600;
-  text-transform: uppercase;
-}
-.tutorial__menu p span#counter {
-  vertical-align: super;
-  font-size: 1.5rem;
-}
-.tutorial__menu__modify p {
-  width: min(30vw, 9rem);
-}
-.tutorial__menu__wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  top: -100%;
-  transition: all 0.3s ease;
-}
-.tutorial__menu__wrapper--active {
-  top: 0;
-}
-.tutorial__menu__indicator {
-  width: 2rem;
-  display: none;
-}
-.tutorial__menu__indicator--active {
-  display: block;
-}
-.tutorial__menu__migrate_CTA {
-  width: min(10vw, 2.5rem);
-  cursor: pointer;
-}
-.tutorial__menu__macros {
-  height: 4.25rem;
-  min-width: calc(100% - 3rem);
-  max-width: 30rem;
-  margin: 0 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-@media (min-width: 768px) {
-  .tutorial__menu__macros {
-    width: 30rem;
-  }
-}
-.tutorial__menu__macros p {
-  cursor: pointer;
-  text-decoration: underline;
-}
-.tutorial__menu__modify, .tutorial__menu__move {
-  height: 4.25rem;
-  min-width: calc(100% - 3rem);
-  max-width: 30rem;
-  margin: 0 0.5rem;
-  display: none;
-}
-@media (min-width: 768px) {
-  .tutorial__menu__modify, .tutorial__menu__move {
-    width: 30rem;
-  }
-}
-.tutorial__menu__modify--active, .tutorial__menu__move--active {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
 }
 
 body {

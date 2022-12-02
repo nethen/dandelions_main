@@ -2,7 +2,7 @@
 @import "./partials/_breakpoints";
 
 body{
-    background: #000000;
+    background: #333034;
 }
 
 
@@ -36,14 +36,22 @@ body{
             background: none;
             color: white;
         }
+
+        &--disabled{
+            opacity: 30%;
+        }
     }
   }
 
+  &__canvas{
+    border: white solid 0.25rem;
+    }
+
   &__wrapper{
-    width: calc(100% - 2rem);
-    max-width: 20rem;
+    width: calc(100% - 1.5rem);
+    max-width: 20.5rem;
     @include md{
-      width: 20rem;
+      width: 20.5rem;
     }
     canvas {
       display: block;
@@ -55,113 +63,6 @@ body{
       & span{
         text-transform: uppercase;
         font-weight: 600;
-      }
-    }
-  }
-
-  &__menu{
-    height: 4.25rem;
-    position: relative;
-    border-top: solid 0.25rem black;
-    overflow:hidden;
-
-    &__toggle{
-      position: absolute;
-      width: 3rem;
-      height: 3rem;
-      top: 0.625rem;
-      right: 0;
-      cursor: pointer;
-
-      img{
-        transition: all 0.3s ease;
-      }
-
-      &--active{
-        img{
-          transform: rotate(180deg);
-        }
-      }
-    }
-
-    p{
-        color: white;
-      margin: 0.5rem 0;
-      font-size: min(10vw, 3rem);
-      font-weight: 600;
-      text-transform: uppercase;
-      & span#counter{
-        vertical-align: super;
-        font-size: 1.5rem;
-      }
-    }
-    &__modify p{
-      width: min(30vw, 9rem);
-    }
-
-    &__wrapper{
-      position:relative;
-      display:flex;
-      flex-direction: column;
-      top: -100%;
-      transition: all 0.3s ease;
-        
-      &--active{
-        top: 0;
-      }
-    }
-
-    &__indicator{
-      width: 2rem;
-      display: none;
-      &--active{
-        display:block;
-      }
-    }
-
-    &__migrate_CTA{
-      width: min(10vw, 2.5rem);
-      cursor: pointer;
-    }
-
-    &__macros{
-      height: 4.25rem;
-
-      min-width: calc(100% - 3rem);
-      max-width: 30rem;
-
-      margin: 0 0.5rem;
-      @include md{
-        width: 30rem;
-      }
-
-      display:flex;
-      align-items:center;
-      gap:1rem;
-
-      p{
-        cursor: pointer;
-        text-decoration: underline;
-      }
-    }
-
-    &__modify, &__move{
-      height: 4.25rem;
-
-      min-width: calc(100% - 3rem);
-      max-width: 30rem;
-
-      margin: 0 0.5rem;
-      @include md{
-        width: 30rem;
-      }
-
-      display: none;
-      
-      &--active{
-        display: flex;
-        align-items:center;
-        gap:1rem;
       }
     }
   }
