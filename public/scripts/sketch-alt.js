@@ -131,7 +131,7 @@ function setup() {
   socket.on('pageLoad',(data) => {
     updateMoveText();
     squares = [];
-    globalPos = {x: data[0].x * (CANVAS_COUNT-1), y: data[0].y * (CANVAS_COUNT-1)}
+    globalPos = {x: data[0].x * (CANVAS_COUNT-2), y: data[0].y * (CANVAS_COUNT-2)}
     console.log(globalPos)
     //Get first half of the packet (tile positions + states)
     data[1].forEach(function(square){
