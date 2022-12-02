@@ -191,7 +191,7 @@ function setup() {
         if (x){
           if (element.state > -1) {
             x.srcWidth = element.state;
-            x.health = 20;
+            x.health = 48;
           }
           x.state = element.state;
         }
@@ -208,7 +208,7 @@ function setup() {
         if (element.state.state > 0){
         correspondingSquare.ripple(element.state.state);
         correspondingSquare.startMoving();
-        correspondingSquare.health = 20;
+        correspondingSquare.health = 48;
         }
       })
 

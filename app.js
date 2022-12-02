@@ -4,7 +4,7 @@ class SquareHolder {
 		this.position = {x: x, y: y};
 		this.state = state;
 		if(this.state == -1) this.health = 0;
-		else this.health = 20;
+		else this.health = 48;
 	}
 }
 
@@ -99,7 +99,7 @@ let serverRefresh = setInterval(function(){
 		}
 		else {
 			a.state = Math.log2(element.state) - 2;
-			a.health = 20;
+			a.health = 48;
 		}
 	});
 
@@ -107,7 +107,7 @@ let serverRefresh = setInterval(function(){
 		const a = rippleSquares.find(newElement => newElement.position.x == element.position.x &&  newElement.position.y == element.position.y)	
 		if (a) {
 			calcripple(a, element);
-			element.health = 20;
+			element.health = 48;
 		}
 		else if (element.health > 0) element.health--;
 		if (element.health == 0) element.state = -1;
@@ -121,7 +121,7 @@ let serverRefresh = setInterval(function(){
 			if (pass == false){
 				let randInd = Math.floor(Math.random() * x.length);
 				x[randInd].state = Math.floor(Math.random() * 5);
-				x[randInd].health = 20;
+				x[randInd].health = 48;
 				tempSquares.push(new SquareHolder(x[randInd].position.x, x[randInd].position.y, Math.pow(2, 2 + x[randInd].state)));
 			}
 		}
