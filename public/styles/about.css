@@ -1,0 +1,102 @@
+@font-face {
+  font-family: "Happy Times";
+  font-weight: 400;
+  font-style: normal;
+  src: url("../../fonts/happyTimes/happy-times-NG_regular_master_web.woff2") format("woff2"), url("../../fonts/happyTimes/happy-times-NG_regular_master_web.woff") format("woff");
+}
+@font-face {
+  font-family: "Happy Times";
+  font-weight: 400;
+  font-style: italic;
+  src: url("../../fonts/happyTimes/happy-times-NG_italic_master_web.woff2") format("woff2"), url("../../fonts/happyTimes/happy-times-NG_italic_master_web.woff") format("woff");
+}
+@font-face {
+  font-family: "Apfel Grotesk";
+  font-weight: 400;
+  src: url("../../fonts/apfel/ApfelGrotezk-Regular.woff2") format("woff2"), url("../../fonts/apfel/ApfelGrotezk-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Apfel Grotesk";
+  font-weight: 600;
+  src: url("../../fonts/apfel/ApfelGrotezk-Fett.woff2") format("woff2"), url("../../fonts/apfel/ApfelGrotezk-Fett.woff") format("woff");
+}
+p {
+  font-size: 1.5rem;
+  line-height: 150%;
+  margin: 0.5rem 0;
+}
+
+section {
+  position: relative;
+  margin: 0 1rem;
+}
+@media (min-width: 768px) {
+  section {
+    margin: 0 2rem;
+  }
+}
+@media (min-width: 1200px) {
+  section {
+    margin: 0 4rem;
+  }
+}
+
+.hero {
+  height: 100vh;
+  min-height: 568px;
+  overflow: hidden;
+}
+.hero__video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 20%;
+  width: 100%;
+  min-height: 568px;
+}
+.hero__desc {
+  position: absolute;
+  bottom: 8rem;
+}
+.hero__desc h1 {
+  margin: 0;
+}
+.hero__desc h1 span.date {
+  font: 2rem "Apfel Grotesk", sans-serif;
+}
+.hero__desc p {
+  font-size: 2rem;
+}
+
+@media (min-width: 768px) {
+  .collective__about {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.collective__about__header {
+  margin: 0;
+  font-size: 4rem;
+  font-weight: 400;
+  width: 26rem;
+}
+.collective__about__header span {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.collective__about p {
+  width: calc(100% - 32rem);
+}
+.collective__artists {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.collective__artists__profile h3 {
+  font-size: 3rem;
+  font-weight: 400;
+  margin: 0;
+}
+.collective__artists__profile p {
+  text-transform: uppercase;
+}/*# sourceMappingURL=about.css.map */
