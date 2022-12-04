@@ -184,8 +184,8 @@ section{
     margin-top: 8rem;
     @include lg{
         display: grid;
-        grid-template-columns: 1fr 40rem;
-        
+        grid-template-columns: 1fr 24rem;
+        gap: 4rem;
         p{
             //width: calc(100% - 32rem);
         }
@@ -243,6 +243,18 @@ section{
                         opacity: 50%;
                     }
                 }
+            }
+        }
+    }
+    &__images{
+        position: relative;
+        &__items{
+            position: sticky;
+            top: 2rem;
+            @include md{
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
             }
         }
     }

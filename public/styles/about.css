@@ -185,7 +185,8 @@ section.hero {
 @media (min-width: 1200px) {
   .process {
     display: grid;
-    grid-template-columns: 1fr 40rem;
+    grid-template-columns: 1fr 24rem;
+    gap: 4rem;
   }
 }
 @media (min-width: 1440px) {
@@ -235,6 +236,21 @@ section.hero {
 }
 .process__content__milestones__week__item__date {
   opacity: 50%;
+}
+.process__images {
+  position: relative;
+}
+.process__images__items {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 2rem;
+}
+@media (min-width: 768px) {
+  .process__images__items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
 }
 
 a {
