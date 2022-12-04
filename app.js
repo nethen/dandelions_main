@@ -4,7 +4,7 @@ class SquareHolder {
 		this.position = {x: x, y: y};
 		this.state = state;
 		if(this.state == -1) this.health = 0;
-		else this.health = 20;
+		else this.health = 48;
 	}
 }
 
@@ -15,7 +15,8 @@ let rippleSquares =[];
 let placeholders = [];
 
 //Size of canvas
-const SQUARES = 46;
+const SQUARES = 58;
+const SQUARES_Y = 34;
 
 //Set up connection
 const http = require('http')
@@ -47,17 +48,17 @@ const calcripple = (comparedState, updateState) => {
   }
 
   let initialSeeds = [];
-  for (let i = 0; i < 5; i ++){
-	for (let j = 0; j < 5; j++){
-		let x = (9 * i) + Math.floor(Math.random() * 10);
-		let y = (9 * j) + Math.floor(Math.random() * 10);
+  for (let i = 0; i < 7; i ++){
+	for (let j = 0; j < 4; j++){
+		let x = (8 * i) + Math.floor(Math.random() * 10);
+		let y = (8 * j) + Math.floor(Math.random() * 10);
 		initialSeeds.push([x,y]);
 	}
 }
 
 //Create tiles based on constant X & Y
 for (let i = 0; i < SQUARES; i++){
-    for (let j = 0; j < SQUARES; j++){
+    for (let j = 0; j < SQUARES_Y; j++){
 		if (initialSeeds.some(element => element[0] == i && element[1] == j)){
 			loadSquares.push(new SquareHolder(i,j, Math.floor(Math.random() * 5)));
 		}
@@ -98,7 +99,7 @@ let serverRefresh = setInterval(function(){
 		}
 		else {
 			a.state = Math.log2(element.state) - 2;
-			a.health = 20;
+			a.health = 48;
 		}
 	});
 
@@ -106,21 +107,21 @@ let serverRefresh = setInterval(function(){
 		const a = rippleSquares.find(newElement => newElement.position.x == element.position.x &&  newElement.position.y == element.position.y)	
 		if (a) {
 			calcripple(a, element);
-			element.health = 20;
+			element.health = 48;
 		}
 		else if (element.health > 0) element.health--;
 		if (element.health == 0) element.state = -1;
 	});
 
 	//decay counter
-	for (let i = 0; i < 5; i ++){
-		for (let j = 0; j < 5; j++){
-			const x = loadSquares.filter(element => element.position.x >= (9 * i) && element.position.x < ((9 * i)+10) && element.position.y >= (9 * j) && element.position.y < ((9 * j)+10))
+	for (let i = 0; i < 7; i ++){
+		for (let j = 0; j < 4; j++){
+			const x = loadSquares.filter(element => element.position.x >= (8 * i) && element.position.x < ((8 * i)+10) && element.position.y >= (8 * j) && element.position.y < ((8 * j)+10))
 			let pass = x.some(element => element.state > -1);
 			if (pass == false){
 				let randInd = Math.floor(Math.random() * x.length);
 				x[randInd].state = Math.floor(Math.random() * 5);
-				x[randInd].health = 20;
+				x[randInd].health = 48;
 				tempSquares.push(new SquareHolder(x[randInd].position.x, x[randInd].position.y, Math.pow(2, 2 + x[randInd].state)));
 			}
 		}
@@ -141,7 +142,7 @@ setInterval(function() {
 io.sockets.on('connection', (socket) => {
 	console.log('Client connected: ' + socket.id)
 	//console.log(updatePlaceable());
-	socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-1)/9))), y: Math.floor(Math.random()*(((SQUARES-1)/9)))},loadSquares,placeholders]);
+	socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-2)/8))), y: Math.floor(Math.random()*(((SQUARES_Y-2)/8)))},loadSquares,placeholders]);
 	//socket.emit('pRequest', placeholders);
 
 	socket.on('mouse', (data) => socket.broadcast.emit('mouse', data))
@@ -152,7 +153,7 @@ io.sockets.on('connection', (socket) => {
 	})
 
 	socket.on('migrate',(data) => {
-		socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-1)/9))), y: Math.floor(Math.random()*(((SQUARES-1)/9)))},loadSquares,placeholders]);
+		socket.emit('pageLoad', [{x: Math.floor(Math.random()*(((SQUARES-2)/8))), y: Math.floor(Math.random()*(((SQUARES_Y-2)/8)))},loadSquares,placeholders]);
 	})
 
 	socket.on('squareUpdate',(data) => {

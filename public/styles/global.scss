@@ -76,33 +76,23 @@ img{
       font-size: min(10vw, 3rem);
       font-weight: 600;
       text-transform: uppercase;
+      width: min(30vw, 9rem);
       & span#counter{
         vertical-align: super;
         font-size: 1.5rem;
       }
     }
-    &__modify p{
-      width: min(30vw, 9rem);
-    }
 
     &__wrapper{
       position:relative;
       display:flex;
-      flex-direction: column;
-      top: -100%;
-      transition: all 0.3s ease;
-
-      &--active{
-        top: 0;
-      }
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 1rem;
     }
 
     &__indicator{
       width: 2rem;
-      display: none;
-      &--active{
-        display:block;
-      }
     }
 
     &__migrate_CTA{
@@ -110,44 +100,18 @@ img{
       cursor: pointer;
     }
 
-    &__macros{
+    &__main{
       height: 4.25rem;
 
       min-width: calc(100% - 3rem);
       max-width: 30rem;
 
-      margin: 0 0.5rem;
+      display: flex;
+      align-items: center;
+
+      gap: 1rem;
       @include md{
         width: 30rem;
-      }
-
-      display:flex;
-      align-items:center;
-      gap:1rem;
-
-      p{
-        cursor: pointer;
-        text-decoration: underline;
-      }
-    }
-
-    &__modify, &__move{
-      height: 4.25rem;
-
-      min-width: calc(100% - 3rem);
-      max-width: 30rem;
-
-      margin: 0 0.5rem;
-      @include md{
-        width: 30rem;
-      }
-
-      display: none;
-      
-      &--active{
-        display: flex;
-        align-items:center;
-        gap:1rem;
       }
     }
   }
