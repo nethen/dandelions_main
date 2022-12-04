@@ -29,6 +29,11 @@ p {
   line-height: 150%;
   margin: 0.5rem 0;
 }
+@media (min-width: 1200px) {
+  p {
+    font-size: 1.5rem;
+  }
+}
 
 section {
   position: relative;
@@ -86,9 +91,6 @@ section.hero {
 .hero__desc h1 span.date {
   font: min(4vw, 4rem) "Apfel Grotesk", sans-serif;
 }
-.hero__desc p {
-  font-size: 1.5rem;
-}
 @media (min-width: 768px) {
   .hero__desc p {
     font-size: 2rem;
@@ -99,6 +101,12 @@ section.hero {
   margin-bottom: 2rem;
 }
 @media (min-width: 1200px) {
+  .collective {
+    display: grid;
+    grid-template-columns: 24rem 1fr;
+  }
+}
+@media (min-width: 1440px) {
   .collective {
     display: grid;
     grid-template-columns: 32rem 1fr;
@@ -115,6 +123,11 @@ section.hero {
 @media (min-width: 768px) {
   .collective h2 {
     width: 24rem;
+  }
+}
+@media (min-width: 1200px) {
+  .collective__about__desc {
+    font-size: 1.5rem;
   }
 }
 .collective__about__artists {
@@ -134,8 +147,96 @@ section.hero {
 }
 .collective__about__artists__profile p {
   text-transform: uppercase;
+  font-size: 1rem;
 }
 
+.origin h2 {
+  margin: 0;
+  font-size: min(12vw, 3rem);
+  font-weight: 400;
+}
+.origin h2 span {
+  text-transform: uppercase;
+}
+@media (min-width: 768px) {
+  .origin h2 {
+    width: 24rem;
+  }
+}
+@media (min-width: 1200px) {
+  .origin {
+    display: grid;
+    grid-template-columns: 24rem 1fr;
+  }
+}
+@media (min-width: 1440px) {
+  .origin {
+    display: grid;
+    grid-template-columns: 32rem 1fr;
+  }
+}
 .origin p {
   margin-bottom: 2rem;
+}
+
+.process {
+  margin-top: 8rem;
+}
+@media (min-width: 1200px) {
+  .process {
+    display: grid;
+    grid-template-columns: 1fr 40rem;
+  }
+}
+@media (min-width: 1440px) {
+  .process {
+    display: grid;
+    grid-template-columns: 1fr 48rem;
+  }
+}
+.process__content__milestones {
+  margin: 2rem 0;
+}
+.process__content__milestones h3 {
+  margin: 0;
+  margin-bottom: 1rem;
+  font-size: min(10vw, 2rem);
+  font-weight: 400;
+}
+.process__content__milestones h3 span {
+  text-transform: uppercase;
+}
+.process__content__milestones h4 {
+  font-size: min(8vw, 1.5rem);
+  font-weight: 400;
+  text-transform: uppercase;
+  margin: 0.5rem 0;
+}
+.process__content__milestones h4 span {
+  font-size: 1rem;
+}
+.process__content__milestones__week {
+  margin-bottom: 4rem;
+}
+@media (min-width: 1200px) {
+  .process__content__milestones__week__item {
+    display: grid;
+    grid-template-columns: 24rem 1fr;
+  }
+}
+@media (min-width: 1440px) {
+  .process__content__milestones__week__item {
+    display: grid;
+    grid-template-columns: 32rem 1fr;
+  }
+}
+.process__content__milestones__week__item p {
+  font-size: 1rem;
+}
+.process__content__milestones__week__item__date {
+  opacity: 50%;
+}
+
+a {
+  color: black;
 }/*# sourceMappingURL=about.css.map */

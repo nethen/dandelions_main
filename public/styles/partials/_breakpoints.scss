@@ -11,3 +11,10 @@
         @content;
     }
  }
+
+  // Extra large devices
+  @mixin xl {
+    @media (min-width: 1440px) {
+        @content;
+    }
+ }

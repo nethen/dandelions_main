@@ -9,6 +9,10 @@ p{
     font-size: 1rem;
     line-height: 150%;
     margin: 0.5rem 0;
+
+    @include lg{
+        font-size: 1.5rem;
+    }
 }
 
 section{
@@ -58,7 +62,6 @@ section{
 
         }
         p{
-            font-size: 1.5rem;
             @include md{
                 font-size: 2rem;
             }
@@ -77,6 +80,15 @@ section{
     // }
 
     @include lg{
+        display: grid;
+        grid-template-columns:24rem 1fr;
+        
+        p{
+            //width: calc(100% - 32rem);
+        }
+    }
+
+    @include xl{
         display: grid;
         grid-template-columns:32rem 1fr;
         
@@ -100,6 +112,11 @@ section{
     }
 
     &__about{
+        &__desc{
+            @include lg{
+                font-size: 1.5rem;
+            }
+        }
         &__artists{
             display: grid;
             gap: 1rem;
@@ -117,6 +134,7 @@ section{
                 }
                 p{
                     text-transform: uppercase;
+                    font-size: 1rem;
                 }
             }
         }
@@ -124,8 +142,113 @@ section{
 }
 
 .origin{
+    h2{
+        margin: 0;
+        font-size: min(12vw, 3rem);
+        font-weight: 400;
+        span{
+            text-transform: uppercase;
+        }
+        @include md{
+            width: 24rem;
+        }
+
+    }
+
+    @include lg{
+        display: grid;
+        grid-template-columns:24rem 1fr;
+        
+        p{
+            //width: calc(100% - 32rem);
+        }
+    }
+
+    @include xl{
+        display: grid;
+        grid-template-columns:32rem 1fr;
+        
+        p{
+            //width: calc(100% - 32rem);
+        }
+    }
+
     p{
         margin-bottom: 2rem;
     }
+
+    
+}
+
+.process{
+    margin-top: 8rem;
+    @include lg{
+        display: grid;
+        grid-template-columns: 1fr 40rem;
+        
+        p{
+            //width: calc(100% - 32rem);
+        }
+    }
+
+    @include xl{
+        display: grid;
+        grid-template-columns: 1fr 48rem ;
+        
+        p{
+            //width: calc(100% - 32rem);
+        }
+    }
+    &__content{
+        &__milestones{
+            margin: 2rem 0;
+            h3{
+                margin: 0;
+                margin-bottom: 1rem;
+                font-size: min(10vw, 2rem);
+                font-weight: 400;
+                span{
+                    text-transform: uppercase;
+                }
+        
+            }
+
+            h4{
+                
+                font-size: min(8vw, 1.5rem);
+                font-weight: 400;
+                text-transform: uppercase; 
+                span{
+                    font-size: 1rem;
+                }
+                margin: 0.5rem 0;
+        
+            }
+            &__week{
+                margin-bottom: 4rem;
+                &__item{
+                    @include lg{
+                        display: grid;
+                        grid-template-columns: 24rem 1fr;
+                    }
+                
+                    @include xl{
+                        display: grid;
+                        grid-template-columns: 32rem 1fr;
+                    }
+                    p{
+                        font-size: 1rem;
+                    }
+                    &__date{
+                        opacity: 50%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+a{
+    color: black;
 }
 
