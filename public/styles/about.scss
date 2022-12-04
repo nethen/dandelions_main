@@ -2,23 +2,33 @@
 @import "./partials/_breakpoints";
 
 h1{
-    font-size: min(15vw, 4rem);
+    font-size: min(14vw, 8rem);
 }
 
 p{
-    font-size: 1.5rem;
+    font-size: 1rem;
     line-height: 150%;
     margin: 0.5rem 0;
 }
 
 section{
     position: relative;
-    margin: 0 1rem;
+    margin: 2rem 1rem;
     @include md{
-        margin: 0 2rem;
+        margin: 4rem 2rem;
     }
     @include lg{
-        margin: 0 4rem;
+        margin: 6rem 4rem;
+    }
+
+    &.hero{
+        margin: 0 1rem;
+        @include md{
+            margin: 0 2rem;
+        }
+        @include lg{
+            margin: 0 4rem;
+        }
     }
 }
 
@@ -30,9 +40,12 @@ section{
         position: absolute;
         top: 0;
         left: 0;
-        opacity: 20%;
-        width: 100%;
-        min-height: 568px;
+        opacity: 17%;
+        height: 100%;
+        @include lg{
+            width: 100%;
+            height: auto;
+        }
     }
     &__desc{
         position: absolute;
@@ -40,54 +53,79 @@ section{
         h1 {
             margin: 0;
             span.date{
-                font: 2rem "Apfel Grotesk", sans-serif;
+                font: min(4vw, 4rem) "Apfel Grotesk", sans-serif;
             }
 
         }
         p{
-            font-size: 2rem;
+            font-size: 1.5rem;
+            @include md{
+                font-size: 2rem;
+            }
         }
     }
 }
 
 .collective{
-    &__about{
-        @include md{
-            display: flex;
-            justify-content: space-between;\
-            
-            p{
-                width: calc(100% - 32rem);
-            }
-        }
-        &__header{
-            margin: 0;
-            font-size: 4rem;
-            font-weight: 400;
-            width: 26rem;
-            span{
-                font-weight: 600;
-                text-transform: uppercase;
-            }
+    // @include md{
+    //     display: grid;
+    //     grid-template-columns:20rem 1fr;
+        
+    //     p{
+    //         //width: calc(100% - 32rem);
+    //     }
+    // }
 
+    @include lg{
+        display: grid;
+        grid-template-columns:32rem 1fr;
+        
+        p{
+            //width: calc(100% - 32rem);
         }
     }
+    margin-bottom: 2rem;
 
-    &__artists{
-        display: flex;
-        gap: 2rem;
-        flex-wrap: wrap;
+    h2{
+        margin: 0;
+        font-size: min(12vw, 3rem);
+        font-weight: 400;
+        span{
+            text-transform: uppercase;
+        }
+        @include md{
+            width: 24rem;
+        }
 
-        &__profile{
-            h3{
-                font-size: 3rem;
-                font-weight: 400;
-                margin: 0;
+    }
+
+    &__about{
+        &__artists{
+            display: grid;
+            gap: 1rem;
+            margin: 2rem 0;
+    
+            @include md{
+                grid-template-columns: 1fr 1fr 16rem;
             }
-            p{
-                text-transform: uppercase;
+    
+            &__profile{
+                h3{
+                    font-size: 2rem;
+                    font-weight: 400;
+                    margin: 0;
+                }
+                p{
+                    text-transform: uppercase;
+                }
             }
         }
+    }
+}
+
+.origin{
+    p{
+        margin-bottom: 2rem;
     }
 }
 
