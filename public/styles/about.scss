@@ -98,7 +98,7 @@ section{
     }
     margin-bottom: 2rem;
 
-    h2{
+   h2 {
         margin: 0;
         font-size: min(12vw, 3rem);
         font-weight: 400;
@@ -256,6 +256,38 @@ section{
                 grid-template-columns: 1fr 1fr;
                 gap: 1rem;
             }
+        }
+    }
+}
+
+.sitemap{
+    @include md{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+        h2 a{
+            margin: 0;
+            font-family: 'Happy Times';
+            font-style: italic;
+            font-size: min(12vw, 3rem);
+            font-weight: 400;
+            text-decoration: none;
+            span{
+                text-transform: uppercase;
+            }
+    
+        }
+    &__links{
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        @include md{
+            flex-direction: row;
+        }
+        a{
+            text-transform: uppercase;
+            font-size: 2rem;
         }
     }
 }

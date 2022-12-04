@@ -253,6 +253,39 @@ section.hero {
   }
 }
 
+@media (min-width: 768px) {
+  .sitemap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+.sitemap h2 a {
+  margin: 0;
+  font-family: "Happy Times";
+  font-style: italic;
+  font-size: min(12vw, 3rem);
+  font-weight: 400;
+  text-decoration: none;
+}
+.sitemap h2 a span {
+  text-transform: uppercase;
+}
+.sitemap__links {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .sitemap__links {
+    flex-direction: row;
+  }
+}
+.sitemap__links a {
+  text-transform: uppercase;
+  font-size: 2rem;
+}
+
 a {
   color: black;
 }/*# sourceMappingURL=about.css.map */
