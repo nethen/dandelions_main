@@ -177,7 +177,16 @@ section{
         margin-bottom: 2rem;
     }
 
-    
+    &__content{
+        &__images{
+            display: grid;
+            gap: 1rem;
+            @include md{
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+    }
 }
 
 .process{
@@ -229,19 +238,18 @@ section{
                 &__item{
                     @include lg{
                         display: grid;
-                        grid-template-columns: 24rem 1fr;
+                        grid-template-columns: 2fr 1fr;
                     }
                 
-                    @include xl{
-                        display: grid;
-                        grid-template-columns: 32rem 1fr;
-                    }
                     p{
                         font-size: 1rem;
                     }
                     &__date{
                         opacity: 50%;
                     }
+                }
+                &__summary{
+                    font-size: 1.25rem;
                 }
             }
         }

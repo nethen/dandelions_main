@@ -178,6 +178,16 @@ section.hero {
 .origin p {
   margin-bottom: 2rem;
 }
+.origin__content__images {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .origin__content__images {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
 
 .process {
   margin-top: 8rem;
@@ -222,13 +232,7 @@ section.hero {
 @media (min-width: 1200px) {
   .process__content__milestones__week__item {
     display: grid;
-    grid-template-columns: 24rem 1fr;
-  }
-}
-@media (min-width: 1440px) {
-  .process__content__milestones__week__item {
-    display: grid;
-    grid-template-columns: 32rem 1fr;
+    grid-template-columns: 2fr 1fr;
   }
 }
 .process__content__milestones__week__item p {
@@ -236,6 +240,9 @@ section.hero {
 }
 .process__content__milestones__week__item__date {
   opacity: 50%;
+}
+.process__content__milestones__week__summary {
+  font-size: 1.25rem;
 }
 .process__images {
   position: relative;
